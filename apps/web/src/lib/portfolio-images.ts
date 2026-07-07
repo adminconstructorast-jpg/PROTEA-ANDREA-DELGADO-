@@ -19,5 +19,4 @@ export const PORTFOLIO_PHOTOS: PortfolioPhoto[] = [
 ];
 
 export const HERO_IMAGE = '/portfolio/hero-salon.jpg';
-export const ABOUT_IMAGE = '/portfolio/nosotros.jpg';
 export const DETAIL_IMAGE_1 = '/portfolio/detalle-preparativos.jpg';

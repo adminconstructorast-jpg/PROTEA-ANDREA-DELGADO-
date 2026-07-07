@@ -4,12 +4,7 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { Reveal } from '@/components/Reveal';
 import { SERVICE_LABELS } from '@protea/shared';
-import {
-  HERO_IMAGE,
-  ABOUT_IMAGE,
-  DETAIL_IMAGE_1,
-  PORTFOLIO_PHOTOS,
-} from '@/lib/portfolio-images';
+import { HERO_IMAGE, DETAIL_IMAGE_1, PORTFOLIO_PHOTOS } from '@/lib/portfolio-images';
 
 const FEATURED_SERVICES = [
   {
@@ -155,30 +150,20 @@ export default function HomePage() {
 
       {/* Nosotros */}
       <section id="nosotros" className="border-t border-sand bg-white/50">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 md:grid-cols-2 md:py-28">
+        <div className="mx-auto max-w-2xl px-6 py-20 text-center md:py-28">
           <Reveal>
-            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
-              <Image
-                src={ABOUT_IMAGE}
-                alt="Boda organizada por Andrea Delgado"
-                fill
-                className="object-cover"
-                sizes="(min-width: 768px) 40vw, 100vw"
-              />
-            </div>
-          </Reveal>
-          <Reveal delay={150}>
             <p className="eyebrow">Sobre Andrea</p>
-            <h2 className="mt-3 font-serif text-4xl">
+            <p className="mt-4 font-script text-5xl text-terracotta">Andrea Delgado</p>
+            <h2 className="mt-4 font-serif text-4xl">
               Cada evento merece un relato propio.
             </h2>
-            <p className="mt-5 text-ink/70">
+            <p className="mx-auto mt-5 max-w-lg text-ink/70">
               Con años de experiencia diseñando bodas y eventos de alto perfil, Andrea
               Delgado combina visión estética, precisión logística y calidez humana para
               transformar cada celebración en una experiencia inolvidable — sin perder de
               vista el detalle más pequeño.
             </p>
-            <div className="mt-8 grid grid-cols-2 gap-6 border-t border-sand pt-6">
+            <div className="mx-auto mt-10 grid max-w-xs grid-cols-2 gap-6 border-t border-sand pt-6">
               <div>
                 <p className="font-serif text-3xl text-terracotta">150+</p>
                 <p className="text-sm text-ink/60">Eventos realizados</p>
