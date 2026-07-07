@@ -418,7 +418,7 @@ export function QuoteWizard() {
               checked={data.acceptsContact}
               onChange={(e) => patch({ acceptsContact: e.target.checked })}
             />
-            Autorizo a PROTEA a contactarme por correo y WhatsApp sobre mi evento.
+            Autorizo a Andrea Delgado a contactarme por correo y WhatsApp sobre mi evento.
           </label>
           <FieldError msg={errors.acceptsContact} />
         </StepShell>

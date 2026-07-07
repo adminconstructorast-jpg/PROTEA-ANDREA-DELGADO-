@@ -38,7 +38,7 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      'La coordinación del día del evento fue impecable. El equipo de PROTEA resolvió todo con una calidez que se sintió en cada momento.',
+      'La coordinación del día del evento fue impecable. El equipo de Andrea Delgado resolvió todo con una calidez que se sintió en cada momento.',
     name: 'Renata',
     context: 'Evento corporativo · CDMX',
   },
@@ -60,7 +60,7 @@ export default function HomePage() {
         <div className="absolute inset-0">
           <Image
             src={HERO_IMAGE}
-            alt="Salón de eventos decorado por PROTEA"
+            alt="Salón de eventos decorado por Andrea Delgado"
             fill
             priority
             className="object-cover"
@@ -80,8 +80,8 @@ export default function HomePage() {
           </Reveal>
           <Reveal delay={200}>
             <p className="mt-6 max-w-lg text-lg text-ink/70">
-              En PROTEA acompañamos a cada pareja y anfitrión para crear experiencias
-              impecables — del primer boceto al último brindis.
+              Acompañamos a cada pareja y anfitrión para crear experiencias impecables —
+              del primer boceto al último brindis.
             </p>
           </Reveal>
           <Reveal delay={300}>
@@ -130,7 +130,7 @@ export default function HomePage() {
               Una muestra de los eventos que hemos tenido el honor de crear.
             </p>
           </Reveal>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {PORTFOLIO_PHOTOS.map((p, i) => (
               <Reveal key={p.id} delay={i * 80}>
                 <div className="group cursor-default">
@@ -160,7 +160,7 @@ export default function HomePage() {
             <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
               <Image
                 src={ABOUT_IMAGE}
-                alt="Boda organizada por Andrea Delgado, PROTEA"
+                alt="Boda organizada por Andrea Delgado"
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 40vw, 100vw"
@@ -213,7 +213,7 @@ export default function HomePage() {
                 <div className="card h-full">
                   <p className="font-serif text-3xl leading-none text-clay/50">&ldquo;</p>
                   <p className="mt-2 text-sm text-ink/80">{t.quote}</p>
-                  <p className="mt-5 font-medium">{t.name}</p>
+                  <p className="mt-5 font-script text-2xl text-terracotta">{t.name}</p>
                   <p className="text-xs uppercase tracking-luxe text-gold">{t.context}</p>
                 </div>
               </Reveal>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { Logo } from '@/components/Logo';
 import type { UserRole } from '@protea/shared';
 
 /**
@@ -65,7 +66,9 @@ function LoginForm() {
   return (
     <div className="mx-auto max-w-md py-16">
       <div className="card">
-        <p className="eyebrow text-center">Portal PROTEA</p>
+        <div className="mb-6 flex justify-center">
+          <Logo height={40} />
+        </div>
         <h1 className="mt-2 text-center font-serif text-3xl">
           {mode === 'login' ? 'Bienvenido de nuevo' : 'Crea tu acceso'}
         </h1>

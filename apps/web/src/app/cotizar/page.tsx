@@ -2,7 +2,7 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { QuoteWizard } from '@/components/quote/QuoteWizard';
 
 export const metadata = {
-  title: 'Cotizador · PROTEA · Andrea Delgado',
+  title: 'Cotizador · Andrea Delgado',
   description: 'Recibe una propuesta personalizada para tu evento en minutos.',
 };
 

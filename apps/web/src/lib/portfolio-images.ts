@@ -9,10 +9,12 @@ export interface PortfolioPhoto {
   tag: string;
 }
 
+// 'evento-social.jpg' (Noche de Fiesta) se retiró del portafolio por baja
+// calidad/resolución (miniatura de reel, borrosa). Sustituir cuando Andrea
+// comparta una foto de evento social en mejor resolución.
 export const PORTFOLIO_PHOTOS: PortfolioPhoto[] = [
   { id: 'boda-elegante', url: '/portfolio/boda-elegante.jpg', title: 'Boda Elegante', tag: 'Monterrey' },
   { id: 'identidad-boda', url: '/portfolio/identidad-boda.jpg', title: 'Identidad de Boda', tag: 'Monterrey' },
-  { id: 'evento-social', url: '/portfolio/evento-social.jpg', title: 'Noche de Fiesta', tag: 'Monterrey' },
   { id: 'detalles-rojo', url: '/portfolio/detalles-rojo.jpg', title: 'Despedida de Soltera', tag: 'Monterrey' },
 ];
 

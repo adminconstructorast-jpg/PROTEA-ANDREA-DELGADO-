@@ -6,7 +6,7 @@ export function SiteFooter() {
     <footer className="border-t border-sand bg-sand/40">
       <div className="mx-auto grid max-w-6xl gap-8 px-6 py-14 md:grid-cols-4">
         <div>
-          <Logo markClassName="h-8 w-8" />
+          <Logo height={44} />
           <p className="mt-4 text-sm text-ink/70">
             Wedding &amp; Event Planning de alto perfil en México.
           </p>
@@ -43,7 +43,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-sand/70 py-5 text-center text-xs text-ink/50">
-        © {new Date().getFullYear()} PROTEA · Andrea Delgado. Todos los derechos reservados.
+        © {new Date().getFullYear()} Andrea Delgado. Todos los derechos reservados.
       </div>
     </footer>
   );

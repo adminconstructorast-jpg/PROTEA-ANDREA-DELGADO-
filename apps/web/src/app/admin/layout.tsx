@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AuthGate } from '@/components/auth/AuthGate';
+import { Logo } from '@/components/Logo';
 import { useAuth } from '@/lib/auth-context';
 
 const NAV = [
@@ -32,8 +33,7 @@ function Sidebar() {
   return (
     <aside className="hidden w-64 flex-col border-r border-sand bg-white/60 p-6 md:flex">
       <Link href="/" className="mb-10 block">
-        <p className="font-serif text-xl">PROTEA</p>
-        <p className="text-[10px] uppercase tracking-luxe text-gold">Admin</p>
+        <Logo height={34} />
       </Link>
       <nav className="flex-1 space-y-1">
         {NAV.map((item) => {
