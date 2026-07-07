@@ -1,0 +1,43 @@
+# Dependencias
+node_modules/
+
+# Builds
+.next/
+out/
+dist/
+lib/
+*.tsbuildinfo
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log
+ui-debug.log
+pubsub-debug.log
+database-debug.log
+.emulator-data/
+
+# Entorno y secretos — NUNCA commitear credenciales
+.env
+.env.*
+!.env.example
+!.env.local.example
+*-service-account.json
+serviceAccountKey.json
+*.pem
+*.key
+*.cer
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Logs y caché
+npm-debug.log*
+yarn-error.log
+.turbo/
+coverage/

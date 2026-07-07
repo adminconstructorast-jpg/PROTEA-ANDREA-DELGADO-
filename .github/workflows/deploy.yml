@@ -1,0 +1,79 @@
+name: Deploy · PROTEA
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  FIREBASE_PROJECT: protea-andrea-delgado
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────
+  # 1. Validación: typecheck de todos los workspaces en cada push/PR.
+  # ─────────────────────────────────────────────────────────────────────
+  validate:
+    name: Lint & Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck --workspaces --if-present
+      - name: Build web (Next.js)
+        run: npm run build --workspace=apps/web
+        env:
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ env.FIREBASE_PROJECT }}
+
+  # ─────────────────────────────────────────────────────────────────────
+  # 2. Deploy: solo en push a main, tras validar.
+  # ─────────────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy a Firebase
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Build de Cloud Functions
+        run: npm run build --workspace=functions
+
+      - name: Autenticación con Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          # Service account con roles: Firebase Admin, Cloud Functions Admin,
+          # Service Account User. Guardar el JSON en el secreto del repo.
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Desplegar reglas, Functions y Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: protea-andrea-delgado
+          channelId: live
+
+      - name: Deploy Functions y reglas (CLI)
+        run: |
+          npm i -g firebase-tools
+          firebase deploy \
+            --only functions,firestore:rules,firestore:indexes,storage \
+            --project protea-andrea-delgado \
+            --non-interactive
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
