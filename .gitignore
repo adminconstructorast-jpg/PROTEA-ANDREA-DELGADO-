@@ -41,3 +41,5 @@ npm-debug.log*
 yarn-error.log
 .turbo/
 coverage/
+.vercel
+.env*
