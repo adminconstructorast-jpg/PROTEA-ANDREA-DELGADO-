@@ -1,12 +1,12 @@
 import Link from 'next/link';
+import { Logo } from './Logo';
 
 export function SiteFooter() {
   return (
     <footer className="border-t border-sand bg-sand/40">
       <div className="mx-auto grid max-w-6xl gap-8 px-6 py-14 md:grid-cols-4">
         <div>
-          <p className="font-serif text-lg">PROTEA</p>
-          <p className="mt-1 text-xs uppercase tracking-luxe text-gold">Andrea Delgado</p>
+          <Logo markClassName="h-8 w-8" />
           <p className="mt-4 text-sm text-ink/70">
             Wedding &amp; Event Planning de alto perfil en México.
           </p>

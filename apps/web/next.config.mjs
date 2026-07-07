@@ -4,10 +4,7 @@ const nextConfig = {
   // Permite importar el paquete compartido (TS sin transpilar) desde el monorepo.
   transpilePackages: ['@protea/shared'],
   images: {
-    remotePatterns: [
-      { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
-      { protocol: 'https', hostname: 'images.unsplash.com' },
-    ],
+    remotePatterns: [{ protocol: 'https', hostname: 'firebasestorage.googleapis.com' }],
   },
   webpack: (config) => {
     // El paquete `@protea/shared` usa extensiones `.js` en sus imports
