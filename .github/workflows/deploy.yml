@@ -64,17 +64,11 @@ jobs:
       - name: Configurar gcloud CLI
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Desplegar reglas, Functions y Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          projectId: protea-andrea-delgado
-          channelId: live
-        env:
-          # firebase.json usa frameworksBackend (Next.js); esta acción necesita
-          # el experimento habilitado explícitamente para poder desplegarlo.
-          FIREBASE_CLI_EXPERIMENTS: webframeworks
+      # El sitio público real lo sirve Vercel (ver vercel.json), no Firebase
+      # Hosting — se removió el paso de FirebaseExtended/action-hosting-deploy
+      # porque su empaquetado de Next.js como Cloud Function no resuelve
+      # @protea/shared (paquete del workspace, no publicado en npm) y aborta
+      # todo el job antes de llegar a lo que sí importa: Cloud Functions.
 
       - name: Asegurar secretos de Cloud Functions en Secret Manager
         # Los `defineSecret()` de functions/src/config.ts deben existir en Secret
