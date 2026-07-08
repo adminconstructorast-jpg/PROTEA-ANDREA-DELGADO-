@@ -83,6 +83,8 @@ jobs:
             eventarc.googleapis.com \
             pubsub.googleapis.com \
             cloudscheduler.googleapis.com \
+            firebasestorage.googleapis.com \
+            firebaserules.googleapis.com \
             --project="${{ env.FIREBASE_PROJECT }}"
 
       # El sitio público real lo sirve Vercel (ver vercel.json), no Firebase
