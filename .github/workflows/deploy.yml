@@ -71,6 +71,10 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: protea-andrea-delgado
           channelId: live
+        env:
+          # firebase.json usa frameworksBackend (Next.js); esta acción necesita
+          # el experimento habilitado explícitamente para poder desplegarlo.
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
 
       - name: Asegurar secretos de Cloud Functions en Secret Manager
         # Los `defineSecret()` de functions/src/config.ts deben existir en Secret
