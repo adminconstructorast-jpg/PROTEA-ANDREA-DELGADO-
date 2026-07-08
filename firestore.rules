@@ -1,0 +1,178 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PROTEA · Andrea Delgado — Reglas de seguridad de Firestore
+//
+// Roles (custom claims en el token de Auth, asignados vía Cloud Function):
+//   role == 'planner'  → Andrea / administradora: acceso total al negocio.
+//   role == 'staff'    → equipo operativo: lectura amplia, escritura acotada.
+//   role == 'client'   → novios/anfitriones: solo SUS eventos (memberUids).
+//
+// Los invitados (guests) NUNCA se autentican: sus respuestas de RSVP entran
+// exclusivamente por el webhook de WhatsApp (Admin SDK, bypass de reglas).
+// ─────────────────────────────────────────────────────────────────────────────
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ─────────────────────────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function role() {
+      return isSignedIn() ? request.auth.token.get('role', '') : '';
+    }
+
+    function isPlanner() {
+      return role() == 'planner';
+    }
+
+    function isStaff() {
+      return role() == 'staff' || isPlanner();
+    }
+
+    function isEventMember(eventId) {
+      return isSignedIn()
+        && request.auth.uid in get(/databases/$(database)/documents/events/$(eventId)).data.memberUids;
+    }
+
+    // ── users: perfil propio; la gestión de roles es solo de la planner ─────
+    match /users/{uid} {
+      allow read: if isStaff() || (isSignedIn() && request.auth.uid == uid);
+      allow create: if isSignedIn()
+        && request.auth.uid == uid
+        // Nadie se auto-asigna rol: el rol lo escribe una Cloud Function.
+        && !request.resource.data.keys().hasAny(['role']);
+      allow update: if isPlanner()
+        || (isSignedIn()
+            && request.auth.uid == uid
+            && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']));
+      allow delete: if isPlanner();
+    }
+
+    // ── leads: el cotizador público crea; solo el negocio lee/gestiona ──────
+    // La creación pública está fuertemente validada para evitar abuso.
+    match /leads/{leadId} {
+      allow create: if
+        request.resource.data.keys().hasAll(['contact', 'eventType', 'status', 'source', 'createdAt'])
+        && request.resource.data.status == 'new'
+        && request.resource.data.eventType in ['wedding', 'corporate', 'social']
+        && request.resource.data.contact.fullName is string
+        && request.resource.data.contact.fullName.size() >= 2
+        && request.resource.data.contact.fullName.size() <= 120
+        && request.resource.data.contact.email is string
+        && request.resource.data.contact.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')
+        && request.resource.data.contact.phone is string
+        && request.resource.data.contact.phone.size() <= 20
+        && request.resource.data.guestCount is int
+        && request.resource.data.guestCount > 0
+        && request.resource.data.guestCount <= 5000
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if isStaff();
+    }
+
+    // ── quotes: cotizaciones formales (PDF) generadas por el negocio ────────
+    match /quotes/{quoteId} {
+      allow read: if isStaff()
+        || (isSignedIn() && resource.data.clientUid == request.auth.uid);
+      allow write: if isStaff();
+    }
+
+    // ── clients: expediente comercial de cada cliente ───────────────────────
+    match /clients/{clientId} {
+      allow read: if isStaff()
+        || (isSignedIn() && resource.data.uid == request.auth.uid);
+      allow write: if isStaff();
+    }
+
+    // ── events + subcolecciones ─────────────────────────────────────────────
+    match /events/{eventId} {
+      allow read: if isStaff() || isEventMember(eventId);
+      allow create, delete: if isPlanner();
+      allow update: if isStaff();
+
+      // Invitados: los clientes ven la lista y las confirmaciones en tiempo
+      // real, pero NO editan; el RSVP entra por WhatsApp (Cloud Functions).
+      match /guests/{guestId} {
+        allow read: if isStaff() || isEventMember(eventId);
+        allow write: if isStaff();
+      }
+
+      // Mesas del seating planner.
+      match /tables/{tableId} {
+        allow read: if isStaff() || isEventMember(eventId);
+        allow write: if isStaff();
+      }
+
+      // Itinerario / línea de tiempo del evento.
+      match /timeline/{itemId} {
+        allow read: if isStaff() || isEventMember(eventId);
+        allow write: if isStaff();
+      }
+
+      // Tareas operativas internas.
+      match /tasks/{taskId} {
+        allow read, write: if isStaff();
+      }
+
+      // Presupuesto interno (números del negocio): solo staff.
+      match /budget/{lineId} {
+        allow read, write: if isStaff();
+      }
+
+      // Pagos del evento: el cliente ve su estado de cuenta.
+      match /payments/{paymentId} {
+        allow read: if isStaff() || isEventMember(eventId);
+        allow write: if isPlanner();
+      }
+    }
+
+    // ── vendors: catálogo de proveedores del negocio ────────────────────────
+    match /vendors/{vendorId} {
+      allow read, write: if isStaff();
+    }
+
+    // ── invoices: facturas CFDI 4.0 (timbrado vía Cloud Function) ───────────
+    match /invoices/{invoiceId} {
+      allow read: if isPlanner()
+        || (isSignedIn() && resource.data.clientUid == request.auth.uid);
+      // El timbrado y sus estados los escribe exclusivamente el backend.
+      allow write: if false;
+    }
+
+    // ── faq: base de conocimiento pública del chatbot ───────────────────────
+    match /faq/{faqId} {
+      allow read: if true;
+      allow write: if isPlanner();
+    }
+
+    // ── settings: configuración del negocio (plantillas WA, branding…) ──────
+    match /settings/{docId} {
+      allow read: if isStaff();
+      allow write: if isPlanner();
+    }
+
+    // ── Colecciones exclusivas del backend (Admin SDK) ──────────────────────
+    // mail → extensión Trigger Email; waConversations/waMessages → estado del
+    // flujo conversacional de WhatsApp; aiSessions → memoria del chatbot.
+    match /mail/{docId} {
+      allow read, write: if false;
+    }
+    match /waConversations/{docId} {
+      allow read: if isStaff();
+      allow write: if false;
+    }
+    match /waMessages/{docId} {
+      allow read: if isStaff();
+      allow write: if false;
+    }
+    match /aiSessions/{docId} {
+      allow read, write: if false;
+    }
+
+    // ── Denegar todo lo no contemplado ──────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "protea-andrea-delgado",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plataforma ERP/CRM y gestor de eventos para PROTEA · Andrea Delgado — Wedding & Event Planner",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "functions"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "emulators": "firebase emulators:start --import=.emulator-data --export-on-exit",
+    "deploy": "firebase deploy",
+    "deploy:functions": "firebase deploy --only functions",
+    "deploy:hosting": "firebase deploy --only hosting",
+    "deploy:rules": "firebase deploy --only firestore:rules,firestore:indexes,storage"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.29.1",
+    "typescript": "^5.6.3"
+  }
+}

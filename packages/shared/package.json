@@ -1,0 +1,21 @@
+{
+  "name": "@protea/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Modelo de datos, constantes y esquemas de validación compartidos entre web y functions",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,0 +1,46 @@
+rules_version = '2';
+
+// PROTEA · Andrea Delgado — Reglas de Cloud Storage
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isStaff() {
+      return isSignedIn()
+        && request.auth.token.get('role', '') in ['planner', 'staff'];
+    }
+
+    // Activos públicos del sitio (portafolio, branding).
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    // Documentos por evento (contratos, cotizaciones PDF, moodboards).
+    match /events/{eventId}/{allPaths=**} {
+      allow read: if isStaff()
+        || (isSignedIn()
+            && firestore.get(/databases/(default)/documents/events/$(eventId)).data.memberUids.hasAny([request.auth.uid]));
+      allow write: if isStaff()
+        && request.resource.size < 25 * 1024 * 1024;
+    }
+
+    // Importaciones de invitados (CSV/XLSX) — solo el negocio.
+    match /imports/{allPaths=**} {
+      allow read, write: if isStaff()
+        && request.resource.size < 10 * 1024 * 1024;
+    }
+
+    // XML/PDF de facturas CFDI: solo backend (Admin SDK) escribe; lectura staff.
+    match /invoices/{allPaths=**} {
+      allow read: if isStaff();
+      allow write: if false;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

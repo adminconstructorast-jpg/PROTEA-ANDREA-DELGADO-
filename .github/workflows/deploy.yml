@@ -1,0 +1,119 @@
+name: Deploy · PROTEA
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  FIREBASE_PROJECT: protea-andrea-delgado
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────
+  # 1. Validación: typecheck de todos los workspaces en cada push/PR.
+  # ─────────────────────────────────────────────────────────────────────
+  validate:
+    name: Lint & Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck --workspaces --if-present
+      - name: Build web (Next.js)
+        run: npm run build --workspace=apps/web
+        env:
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ env.FIREBASE_PROJECT }}
+
+  # ─────────────────────────────────────────────────────────────────────
+  # 2. Deploy: solo en push a main, tras validar.
+  # ─────────────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy a Firebase
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Build de Cloud Functions
+        run: npm run build --workspace=functions
+
+      - name: Autenticación con Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          # Service account con roles: Firebase Admin, Cloud Functions Admin,
+          # Service Account User. Guardar el JSON en el secreto del repo.
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Configurar gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Desplegar reglas, Functions y Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: protea-andrea-delgado
+          channelId: live
+
+      - name: Asegurar secretos de Cloud Functions en Secret Manager
+        # Los `defineSecret()` de functions/src/config.ts deben existir en Secret
+        # Manager antes de un `firebase deploy --non-interactive` (no hay forma
+        # de capturar el valor por prompt). Si el repo ya tiene el secreto de
+        # GitHub correspondiente (integración real lista), se usa ese valor y
+        # se actualiza en cada deploy; si no, se crea un placeholder una sola
+        # vez para no bloquear el deploy — sustitúyelo luego con
+        # `firebase functions:secrets:set NOMBRE` o en Secret Manager.
+        run: |
+          set -e
+          declare -A SECRETS=(
+            [WHATSAPP_TOKEN]="${{ secrets.WHATSAPP_TOKEN }}"
+            [WHATSAPP_APP_SECRET]="${{ secrets.WHATSAPP_APP_SECRET }}"
+            [WHATSAPP_VERIFY_TOKEN]="${{ secrets.WHATSAPP_VERIFY_TOKEN }}"
+            [ANTHROPIC_API_KEY]="${{ secrets.ANTHROPIC_API_KEY }}"
+            [STRIPE_SECRET_KEY]="${{ secrets.STRIPE_SECRET_KEY }}"
+            [STRIPE_WEBHOOK_SECRET]="${{ secrets.STRIPE_WEBHOOK_SECRET }}"
+            [PAC_API_KEY]="${{ secrets.PAC_API_KEY }}"
+          )
+          for NAME in "${!SECRETS[@]}"; do
+            VALUE="${SECRETS[$NAME]}"
+            EXISTS=false
+            if gcloud secrets describe "$NAME" --project="${{ env.FIREBASE_PROJECT }}" >/dev/null 2>&1; then
+              EXISTS=true
+            fi
+            if [ -n "$VALUE" ]; then
+              if [ "$EXISTS" = true ]; then
+                printf '%s' "$VALUE" | gcloud secrets versions add "$NAME" --project="${{ env.FIREBASE_PROJECT }}" --data-file=-
+              else
+                printf '%s' "$VALUE" | gcloud secrets create "$NAME" --project="${{ env.FIREBASE_PROJECT }}" --data-file=- --replication-policy=automatic
+              fi
+            elif [ "$EXISTS" = false ]; then
+              printf 'PENDING_CONFIGURATION' | gcloud secrets create "$NAME" --project="${{ env.FIREBASE_PROJECT }}" --data-file=- --replication-policy=automatic
+            fi
+          done
+
+      - name: Deploy Functions y reglas (CLI)
+        run: |
+          npm i -g firebase-tools
+          firebase deploy \
+            --only functions,firestore:rules,firestore:indexes,storage \
+            --project protea-andrea-delgado \
+            --non-interactive
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
