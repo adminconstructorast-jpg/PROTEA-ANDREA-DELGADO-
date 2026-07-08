@@ -129,6 +129,37 @@ jobs:
             fi
           done
 
+      - name: Generar functions/.env con parámetros de configuración
+        # Los defineString() de functions/src/config.ts necesitan un valor en
+        # despliegue no-interactivo (firebase deploy no puede preguntar). Se
+        # escribe un .env específico del proyecto con los valores no-secretos;
+        # los que el repo tenga como secreto de GitHub sobrescriben el default.
+        # Este archivo NO se commitea (.env* está en .gitignore) — se genera en
+        # cada corrida de CI. Los valores realmente secretos van por Secret
+        # Manager (paso anterior), no aquí.
+        run: |
+          cat > functions/.env.protea-andrea-delgado <<EOF
+          PLANNER_EMAIL=${PLANNER_EMAIL:-hola@proteaeventos.mx}
+          PLANNER_PHONE=${PLANNER_PHONE:-}
+          PLANNER_ADMIN_EMAILS=${PLANNER_ADMIN_EMAILS:-}
+          WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID:-}
+          PAC_BASE_URL=${PAC_BASE_URL:-https://apisandbox.facturama.mx}
+          CFDI_ISSUER_RFC=${CFDI_ISSUER_RFC:-}
+          CFDI_ISSUER_NAME=${CFDI_ISSUER_NAME:-}
+          CFDI_ISSUER_TAX_REGIME=${CFDI_ISSUER_TAX_REGIME:-612}
+          CFDI_EXPEDITION_ZIP=${CFDI_EXPEDITION_ZIP:-}
+          EOF
+        env:
+          PLANNER_EMAIL: ${{ secrets.PLANNER_EMAIL }}
+          PLANNER_PHONE: ${{ secrets.PLANNER_PHONE }}
+          PLANNER_ADMIN_EMAILS: ${{ secrets.PLANNER_ADMIN_EMAILS }}
+          WHATSAPP_PHONE_NUMBER_ID: ${{ secrets.WHATSAPP_PHONE_NUMBER_ID }}
+          PAC_BASE_URL: ${{ secrets.PAC_BASE_URL }}
+          CFDI_ISSUER_RFC: ${{ secrets.CFDI_ISSUER_RFC }}
+          CFDI_ISSUER_NAME: ${{ secrets.CFDI_ISSUER_NAME }}
+          CFDI_ISSUER_TAX_REGIME: ${{ secrets.CFDI_ISSUER_TAX_REGIME }}
+          CFDI_EXPEDITION_ZIP: ${{ secrets.CFDI_EXPEDITION_ZIP }}
+
       - name: Deploy Functions y reglas (CLI)
         run: |
           npm i -g firebase-tools
