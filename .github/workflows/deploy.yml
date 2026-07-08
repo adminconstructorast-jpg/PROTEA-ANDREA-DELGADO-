@@ -67,9 +67,12 @@ jobs:
       - name: Habilitar APIs de Google Cloud necesarias
         # Los proyectos nuevos no traen estas APIs activadas; gcloud aborta en
         # modo no-interactivo con "would you like to enable? (y/N)" en vez de
-        # activarlas sola. Se habilitan explícitamente una sola vez (llamados
-        # repetidos son no-op) antes de usar Secret Manager o desplegar
-        # Cloud Functions v2 (que corren sobre Cloud Run + Cloud Build).
+        # activarlas sola. Se intenta habilitarlas aquí, pero la cuenta de
+        # servicio de CI deliberadamente NO tiene el rol Service Usage Admin
+        # (permitiría prender/apagar cualquier API del proyecto). Si falla por
+        # permisos, no se aborta el deploy: se asume que ya se habilitaron una
+        # vez manualmente por un usuario con rol de owner/editor.
+        continue-on-error: true
         run: |
           gcloud services enable \
             secretmanager.googleapis.com \
