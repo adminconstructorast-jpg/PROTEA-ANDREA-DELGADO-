@@ -64,6 +64,24 @@ jobs:
       - name: Configurar gcloud CLI
         uses: google-github-actions/setup-gcloud@v2
 
+      - name: Habilitar APIs de Google Cloud necesarias
+        # Los proyectos nuevos no traen estas APIs activadas; gcloud aborta en
+        # modo no-interactivo con "would you like to enable? (y/N)" en vez de
+        # activarlas sola. Se habilitan explícitamente una sola vez (llamados
+        # repetidos son no-op) antes de usar Secret Manager o desplegar
+        # Cloud Functions v2 (que corren sobre Cloud Run + Cloud Build).
+        run: |
+          gcloud services enable \
+            secretmanager.googleapis.com \
+            cloudfunctions.googleapis.com \
+            cloudbuild.googleapis.com \
+            artifactregistry.googleapis.com \
+            run.googleapis.com \
+            eventarc.googleapis.com \
+            pubsub.googleapis.com \
+            cloudscheduler.googleapis.com \
+            --project="${{ env.FIREBASE_PROJECT }}"
+
       # El sitio público real lo sirve Vercel (ver vercel.json), no Firebase
       # Hosting — se removió el paso de FirebaseExtended/action-hosting-deploy
       # porque su empaquetado de Next.js como Cloud Function no resuelve
