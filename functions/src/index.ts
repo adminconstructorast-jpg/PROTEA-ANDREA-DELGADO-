@@ -10,7 +10,7 @@ import { REGION } from './config.js';
 setGlobalOptions({ region: REGION, maxInstances: 10 });
 
 // ── Autenticación y roles ──
-export { onUserCreate, setUserRole } from './auth/roles.js';
+export { onUserProfileCreated, setUserRole } from './auth/roles.js';
 
 // ── CRM: leads y cotizaciones ──
 export { submitQuoteRequest, onLeadCreated } from './crm/leads.js';

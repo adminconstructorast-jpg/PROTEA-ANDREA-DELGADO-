@@ -20,7 +20,7 @@ import { COLLECTIONS, USER_ROLES, type UserRole } from '../shared.js';
  *
  * Los correos en PLANNER_ADMIN_EMAILS obtienen rol `planner`; el resto `client`.
  */
-export const onUserCreate = onDocumentCreated(
+export const onUserProfileCreated = onDocumentCreated(
   { document: 'users/{uid}', region: REGION },
   async (event) => {
     const snap = event.data;

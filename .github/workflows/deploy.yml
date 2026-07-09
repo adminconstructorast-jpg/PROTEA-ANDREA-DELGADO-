@@ -165,6 +165,16 @@ jobs:
       - name: Deploy Functions y reglas (CLI)
         run: |
           npm i -g firebase-tools
+          # Limpieza de una función residual: en un deploy anterior 'onUserCreate'
+          # quedó registrada como blocking function (beforeCreate). Ahora la
+          # asignación de rol vive en 'onUserProfileCreated' (trigger de
+          # Firestore); Firebase no permite convertir una función blocking en un
+          # background trigger, así que se elimina la vieja si aún existe. El
+          # `|| true` hace el paso idempotente (no falla si ya no está).
+          firebase functions:delete onUserCreate \
+            --region us-central1 \
+            --project protea-andrea-delgado \
+            --force || true
           # --force: acepta automáticamente la política de limpieza de imágenes
           # de Artifact Registry (evita que el deploy falle pidiéndola de forma
           # interactiva). No borra funciones no listadas por sí solo.
