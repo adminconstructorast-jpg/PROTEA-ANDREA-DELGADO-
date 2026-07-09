@@ -165,9 +165,13 @@ jobs:
       - name: Deploy Functions y reglas (CLI)
         run: |
           npm i -g firebase-tools
+          # --force: acepta automáticamente la política de limpieza de imágenes
+          # de Artifact Registry (evita que el deploy falle pidiéndola de forma
+          # interactiva). No borra funciones no listadas por sí solo.
           firebase deploy \
             --only functions,firestore:rules,firestore:indexes,storage \
             --project protea-andrea-delgado \
+            --force \
             --non-interactive
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
