@@ -7,6 +7,7 @@ import {
   PLANNER_PHONE,
   WHATSAPP_TOKEN,
   WHATSAPP_PHONE_NUMBER_ID,
+  APP_CHECK_ENFORCE,
 } from '../config.js';
 import { db, FieldValue } from '../lib/admin.js';
 import { queueMail, emailLayout } from '../lib/mail.js';
@@ -46,6 +47,16 @@ function scoreLead(lead: Pick<Lead, 'budgetRange' | 'services' | 'guestCount' | 
  * a Firestore desde el cliente (permite normalización y scoring server-side).
  */
 export const submitQuoteRequest = onCall({ region: REGION }, async (request) => {
+  // Refuerzo anti-abuso: cuando App Check está activo, exige un token válido
+  // (emitido por reCAPTCHA en el navegador). Escalonado vía APP_CHECK_ENFORCE
+  // para no bloquear el sitio hasta que la clave esté configurada en el cliente.
+  if (APP_CHECK_ENFORCE.value() === 'true' && !request.app) {
+    throw new HttpsError(
+      'failed-precondition',
+      'Solicitud no verificada. Recarga la página e inténtalo de nuevo.',
+    );
+  }
+
   const parsed = quoteRequestSchema.safeParse(request.data);
   if (!parsed.success) {
     throw new HttpsError('invalid-argument', 'Datos de cotización inválidos', parsed.error.flatten());

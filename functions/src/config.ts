@@ -31,6 +31,18 @@ export const WHATSAPP_PHONE_NUMBER_ID = defineString('WHATSAPP_PHONE_NUMBER_ID',
 });
 export const GRAPH_API_VERSION = 'v21.0';
 
+// ── Seguridad: App Check ─────────────────────────────────────────────────────
+/**
+ * Interruptor de refuerzo de App Check para los callables públicos
+ * (cotizador y chatbot). Se despliega en `false` para no romper el sitio en
+ * vivo; una vez configurada la clave reCAPTCHA en el cliente (Vercel) se pone
+ * en `true` para exigir un token válido de App Check en cada llamada.
+ */
+export const APP_CHECK_ENFORCE = defineString('APP_CHECK_ENFORCE', {
+  description: 'Exigir App Check en callables públicos ("true"/"false")',
+  default: 'false',
+});
+
 // ── IA (Anthropic) ───────────────────────────────────────────────────────────
 export const ANTHROPIC_API_KEY = defineSecret('ANTHROPIC_API_KEY');
 /** Modelo por defecto para el chatbot y el motor de contenido. */
