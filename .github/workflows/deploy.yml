@@ -165,16 +165,21 @@ jobs:
       - name: Deploy Functions y reglas (CLI)
         run: |
           npm i -g firebase-tools
-          # Limpieza de una función residual: en un deploy anterior 'onUserCreate'
-          # quedó registrada como blocking function (beforeCreate). Ahora la
-          # asignación de rol vive en 'onUserProfileCreated' (trigger de
-          # Firestore); Firebase no permite convertir una función blocking en un
-          # background trigger, así que se elimina la vieja si aún existe. El
-          # `|| true` hace el paso idempotente (no falla si ya no está).
-          firebase functions:delete onUserCreate \
-            --region us-central1 \
-            --project protea-andrea-delgado \
-            --force || true
+          # Limpieza de funciones en estado inconsistente. En deploys previos,
+          # algunas funciones de tipo trigger quedaron registradas con un tipo
+          # incompatible (onUserCreate como blocking `beforeCreate`; onGuestWritten
+          # y onLeadCreated como HTTPS a medio crear tras un fallo de propagación
+          # de Eventarc). Firebase no permite convertir una función existente de
+          # un tipo a un background trigger in situ, así que se eliminan primero y
+          # el deploy las recrea limpias. `onUserCreate` ya no existe como export
+          # (se renombró a `onUserProfileCreated`). El `|| true` hace cada borrado
+          # idempotente (no falla si la función ya no está).
+          for FN in onUserCreate onGuestWritten onLeadCreated; do
+            firebase functions:delete "$FN" \
+              --region us-central1 \
+              --project protea-andrea-delgado \
+              --force || true
+          done
           # --force: acepta automáticamente la política de limpieza de imágenes
           # de Artifact Registry (evita que el deploy falle pidiéndola de forma
           # interactiva). No borra funciones no listadas por sí solo.
