@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { Reveal } from '@/components/Reveal';
+import { ChatWidget } from '@/components/ChatWidget';
 import {
   HERO_IMAGE,
   CATEGORY_META,
@@ -234,6 +235,7 @@ export default function HomePage() {
       </section>
 
       <SiteFooter />
+      <ChatWidget />
     </>
   );
 }

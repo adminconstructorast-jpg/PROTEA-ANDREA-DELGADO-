@@ -1,5 +1,6 @@
 import { SiteHeader } from '@/components/SiteHeader';
 import { QuoteWizard } from '@/components/quote/QuoteWizard';
+import { ChatWidget } from '@/components/ChatWidget';
 
 export const metadata = {
   title: 'Cotizador · Andrea Delgado',
@@ -20,6 +21,7 @@ export default function CotizarPage() {
         </div>
         <QuoteWizard />
       </main>
+      <ChatWidget />
     </>
   );
 }

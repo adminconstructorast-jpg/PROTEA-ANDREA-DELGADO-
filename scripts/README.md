@@ -1,53 +1,64 @@
 # Scripts operativos — PROTEA · Andrea Delgado
 
-Utilidades que se corren **manualmente en tu máquina** (no forman parte del build
-de la app ni del CI).
+## Publicar el portafolio SIN terminal (recomendado) 📸
 
-## `upload-portfolio.mjs` — subir el portafolio a Firebase Storage
+No necesitas correr nada en tu máquina. El flujo automático
+`.github/workflows/portfolio.yml` hace todo:
 
-Descomprime un `.zip` de fotos, las optimiza (máx. **1920px** de ancho, **WebP q80**)
-y las sube al bucket de producción `protea-andrea-delgado.firebasestorage.app`
-bajo `portfolio/` como **lectura pública**. Al terminar escribe
-`apps/web/src/data/portfolio-urls.json` (que ya consume el landing) y limpia la
-carpeta temporal.
+1. **Sube tu `.zip` de fotos una sola vez a Firebase Storage.**
+   - Abre la [consola de Firebase → Storage](https://console.firebase.google.com/project/protea-andrea-delgado/storage).
+   - Crea (o entra a) la carpeta `uploads/`.
+   - Arrastra tu zip y nómbralo `portfolio-raw.zip` (o recuerda el nombre que le pongas).
+2. **Ejecuta el flujo.**
+   - Ve a GitHub → pestaña **Actions** → **“Portafolio · Procesar fotos”** → **Run workflow**.
+   - Deja `uploads/portfolio-raw.zip` (o escribe tu nombre de archivo) y ejecuta.
+3. **Listo.** En unos minutos el flujo descarga el zip, optimiza cada foto
+   (máx. 1920px, WebP q80), la escribe en `apps/web/public/portfolio/`,
+   actualiza `apps/web/src/data/portfolio-urls.json`, commitea a `main` y
+   publica en Vercel (si el secreto `VERCEL_TOKEN` está configurado).
 
-### Requisitos
+### Categorización (opcional)
 
-- Node.js 18 o superior.
-- La **clave de cuenta de servicio** de Google Cloud (el `.json` que descargaste
-  de la consola, p. ej. `protea-andrea-delgado-XXXX.json`). Es la misma cuenta
-  con permisos de Storage que ya usa el despliegue.
+Dentro del zip, organiza las fotos en carpetas llamadas `Bodas/`, `Sociales/`
+(o `Fiesta/`, `XV/`) y `Corporativos/` (o `Empresa/`) para que el sitio las
+divida en esas tres secciones. Lo que no esté en una carpeta reconocida cae en
+**Bodas**; puedes recategorizar después editando el campo `category` en
+`apps/web/src/data/portfolio-urls.json`.
 
-### Pasos
+---
+
+## Variantes manuales (por si alguna vez las necesitas)
+
+Utilidades que se corren **manualmente en tu máquina** (no forman parte del
+build de la app ni del CI). Requieren Node.js 18+ y haber clonado este repo.
+
+### `process-portfolio.mjs` — optimizar a archivos locales del repo
+
+La misma optimización que usa el flujo automático: escribe los `.webp` en
+`apps/web/public/portfolio/<categoría>/` y regenera el JSON con rutas locales.
+No necesita credenciales.
 
 ```bash
 cd scripts
 npm install
+node process-portfolio.mjs --zip "C:\ruta\a\mis-fotos.zip" --clean
+```
 
+Después: commit de `apps/web/public/portfolio` + el JSON, push y deploy.
+
+### `upload-portfolio.mjs` — subir a Firebase Storage (lectura pública)
+
+Variante que sube los `.webp` al bucket `protea-andrea-delgado.firebasestorage.app`
+bajo `portfolio/` con `makePublic()`, y escribe el JSON con URLs
+`https://storage.googleapis.com/...`. Requiere la **clave de cuenta de
+servicio** (`.json`) con acceso a Storage.
+
+```bash
+cd scripts
+npm install
 node upload-portfolio.mjs \
-  --zip "C:\Users\SERGIO TOSCANO\Downloads\drive-download-XXXX.zip" \
+  --zip "C:\ruta\a\mis-fotos.zip" \
   --key "C:\ruta\a\protea-andrea-delgado-XXXX.json"
 ```
 
-En Windows PowerShell, usa comillas alrededor de las rutas con espacios (como
-arriba). Si prefieres, en vez de `--key` puedes exportar la variable
-`GOOGLE_APPLICATION_CREDENTIALS` apuntando al `.json`.
-
-### Categorización (opcional)
-
-Si dentro del `.zip` organizas las fotos en carpetas llamadas `Bodas/`,
-`Sociales/` (o `Fiesta/`, `XV/`) y `Corporativos/` (o `Empresa/`), el script las
-clasifica automáticamente en esas tres secciones del sitio. Las fotos que no
-estén en una carpeta reconocida se asignan a **Bodas** por defecto; puedes
-recategorizarlas después editando el campo `category` en
-`apps/web/src/data/portfolio-urls.json`.
-
-### Después de correrlo
-
-```bash
-git add apps/web/src/data/portfolio-urls.json
-git commit -m "chore: portafolio real subido a Storage"
-git push
-```
-
-El push dispara el auto-deploy en Vercel y el landing muestra las fotos reales.
+Después: commit de `apps/web/src/data/portfolio-urls.json`, push y deploy.
