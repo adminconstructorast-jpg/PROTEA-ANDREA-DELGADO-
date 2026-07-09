@@ -1,0 +1,12 @@
+{
+  "generatedAt": "seed",
+  "bucket": "protea-andrea-delgado.firebasestorage.app",
+  "hero": "/portfolio/hero-salon.jpg",
+  "images": [
+    { "src": "/portfolio/hero-salon.jpg", "category": "bodas", "alt": "Salón de boda decorado" },
+    { "src": "/portfolio/boda-elegante.jpg", "category": "bodas", "alt": "Boda elegante" },
+    { "src": "/portfolio/identidad-boda.jpg", "category": "bodas", "alt": "Identidad visual de boda" },
+    { "src": "/portfolio/detalle-preparativos.jpg", "category": "sociales", "alt": "Detalles de preparativos" },
+    { "src": "/portfolio/detalles-rojo.jpg", "category": "sociales", "alt": "Despedida de soltera" }
+  ]
+}

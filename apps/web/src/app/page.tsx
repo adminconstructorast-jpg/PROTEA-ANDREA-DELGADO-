@@ -3,203 +3,127 @@ import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { Reveal } from '@/components/Reveal';
-import { SERVICE_LABELS } from '@protea/shared';
-import { HERO_IMAGE, DETAIL_IMAGE_1, PORTFOLIO_PHOTOS } from '@/lib/portfolio-images';
+import {
+  HERO_IMAGE,
+  CATEGORY_META,
+  PORTFOLIO_IMAGES,
+  populatedCategories,
+} from '@/lib/portfolio';
 
-const FEATURED_SERVICES = [
-  {
-    key: 'full_planning',
-    icon: '✦',
-    desc: 'Acompañamiento de principio a fin: concepto, proveedores, logística y coordinación del gran día.',
-  },
-  {
-    key: 'floral_design',
-    icon: '❁',
-    desc: 'Diseño floral y ambientación a medida, con estética editorial y detalle artesanal.',
-  },
-  {
-    key: 'guest_management',
-    icon: '✓',
-    desc: 'Confirmaciones inteligentes por WhatsApp, seating y control de asistencia en tiempo real.',
-  },
-] as const;
-
-const TESTIMONIALS = [
-  {
-    quote:
-      'Andrea entendió nuestra visión desde la primera reunión. Cada detalle, desde las flores hasta el itinerario, se sintió absolutamente nosotros.',
-    name: 'Valeria & Emiliano',
-    context: 'Boda · San Miguel de Allende',
-  },
-  {
-    quote:
-      'La coordinación del día del evento fue impecable. El equipo de Andrea Delgado resolvió todo con una calidez que se sintió en cada momento.',
-    name: 'Renata',
-    context: 'Evento corporativo · CDMX',
-  },
-  {
-    quote:
-      'El sistema de confirmaciones por WhatsApp nos ahorró semanas de trabajo — sabíamos exactamente quién venía en tiempo real.',
-    name: 'Sofía & Daniel',
-    context: 'Boda de destino · Riviera Maya',
-  },
-];
+const CTA_IMAGE = PORTFOLIO_IMAGES[1]?.src ?? HERO_IMAGE;
 
 export default function HomePage() {
+  const categories = populatedCategories();
+
   return (
     <>
       <SiteHeader />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src={HERO_IMAGE}
-            alt="Salón de eventos decorado por Andrea Delgado"
-            fill
-            priority
-            className="object-cover"
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/85 to-cream/30" />
-        </div>
+      {/* ── Hero: imagen inmersiva a pantalla completa ────────────────────── */}
+      <section id="inicio" className="relative flex min-h-[92vh] items-center justify-center overflow-hidden">
+        <Image
+          src={HERO_IMAGE}
+          alt="Evento diseñado por Andrea Delgado"
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
+        {/* Velo para legibilidad del texto sobre la foto. */}
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/45 via-ink/30 to-ink/60" />
 
-        <div className="relative mx-auto max-w-6xl px-6 py-28 md:py-40">
+        <div className="relative mx-auto max-w-3xl px-6 py-32 text-center text-cream">
           <Reveal>
-            <p className="eyebrow">Wedding &amp; Event Planning</p>
+            <p className="text-xs uppercase tracking-luxe text-cream/75">
+              Wedding &amp; Event Planning
+            </p>
           </Reveal>
-          <Reveal delay={100}>
-            <h1 className="mt-6 max-w-2xl font-serif text-5xl leading-[1.05] md:text-7xl">
+          <Reveal delay={120}>
+            <h1 className="mt-6 text-balance font-serif text-4xl leading-[1.08] sm:text-5xl md:text-6xl">
               Eventos memorables, diseñados con intención.
             </h1>
           </Reveal>
-          <Reveal delay={200}>
-            <p className="mt-6 max-w-lg text-lg text-ink/70">
-              Acompañamos a cada pareja y anfitrión para crear experiencias impecables —
-              del primer boceto al último brindis.
+          <Reveal delay={240}>
+            <p className="mx-auto mt-6 max-w-xl text-base text-cream/80 md:text-lg">
+              Acompañamos a cada pareja y anfitrión para transformar una visión en una
+              experiencia impecable — del primer boceto al último brindis.
             </p>
           </Reveal>
-          <Reveal delay={300}>
-            <div className="mt-10 flex flex-wrap gap-4">
+          <Reveal delay={360}>
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <Link href="/cotizar" className="btn-primary">
                 Cotizar mi evento
               </Link>
-              <Link href="/#portafolio" className="btn-ghost bg-cream/60 backdrop-blur">
+              <Link
+                href="#servicios"
+                className="inline-flex items-center justify-center rounded-full border border-cream/50 px-7 py-3 text-sm font-medium text-cream transition hover:bg-cream/10"
+              >
                 Ver portafolio
               </Link>
             </div>
           </Reveal>
         </div>
-      </section>
 
-      {/* Servicios */}
-      <section id="servicios" className="border-t border-sand bg-white/50">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
-          <Reveal>
-            <p className="eyebrow">Lo que hacemos</p>
-            <h2 className="mt-3 font-serif text-4xl">Servicios</h2>
-          </Reveal>
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {FEATURED_SERVICES.map((s, i) => (
-              <Reveal key={s.key} delay={i * 100}>
-                <div className="card h-full transition hover:-translate-y-1 hover:shadow-md">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-terracotta/10 text-lg text-terracotta">
-                    {s.icon}
-                  </span>
-                  <h3 className="mt-5 font-serif text-xl">{SERVICE_LABELS[s.key]}</h3>
-                  <p className="mt-3 text-sm text-ink/70">{s.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+        {/* Indicador de scroll. */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-cream/60" aria-hidden>
+          <span className="block h-10 w-px bg-cream/40" />
         </div>
       </section>
 
-      {/* Portafolio */}
-      <section id="portafolio" className="border-t border-sand">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
-          <Reveal>
-            <p className="eyebrow">Momentos</p>
-            <h2 className="mt-3 font-serif text-4xl">Portafolio</h2>
-            <p className="mt-3 max-w-lg text-ink/60">
-              Una muestra de los eventos que hemos tenido el honor de crear.
-            </p>
-          </Reveal>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {PORTFOLIO_PHOTOS.map((p, i) => (
-              <Reveal key={p.id} delay={i * 80}>
-                <div className="group cursor-default">
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-sand">
-                    <Image
-                      src={p.url}
-                      alt={p.title}
-                      fill
-                      className="object-cover transition duration-700 group-hover:scale-105"
-                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
-                  </div>
-                  <p className="mt-3 font-serif text-lg">{p.title}</p>
-                  <p className="text-xs uppercase tracking-luxe text-gold">{p.tag}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Nosotros */}
-      <section id="nosotros" className="border-t border-sand bg-white/50">
-        <div className="mx-auto max-w-2xl px-6 py-20 text-center md:py-28">
+      {/* ── Nosotros ───────────────────────────────────────────────────────── */}
+      <section id="nosotros" className="border-b border-sand">
+        <div className="mx-auto max-w-2xl px-6 py-24 text-center md:py-32">
           <Reveal>
             <p className="eyebrow">Sobre Andrea</p>
             <p className="mt-4 font-script text-5xl text-terracotta">Andrea Delgado</p>
-            <h2 className="mt-4 font-serif text-4xl">
-              Cada evento merece un relato propio.
+            <h2 className="mt-5 text-balance font-serif text-3xl leading-tight md:text-4xl">
+              Cada celebración merece un relato propio.
             </h2>
-            <p className="mx-auto mt-5 max-w-lg text-ink/70">
-              Con años de experiencia diseñando bodas y eventos de alto perfil, Andrea
-              Delgado combina visión estética, precisión logística y calidez humana para
-              transformar cada celebración en una experiencia inolvidable — sin perder de
-              vista el detalle más pequeño.
+            <p className="mx-auto mt-6 max-w-lg text-ink/70">
+              Con más de una década diseñando bodas y eventos de alto perfil, Andrea Delgado
+              combina visión estética, precisión logística y calidez humana para cuidar cada
+              detalle — desde el concepto hasta el último invitado que se despide.
             </p>
-            <div className="mx-auto mt-10 grid max-w-xs grid-cols-2 gap-6 border-t border-sand pt-6">
+            <div className="mx-auto mt-12 grid max-w-sm grid-cols-2 gap-8 border-t border-sand pt-8">
               <div>
-                <p className="font-serif text-3xl text-terracotta">150+</p>
-                <p className="text-sm text-ink/60">Eventos realizados</p>
+                <p className="font-serif text-4xl text-terracotta">150+</p>
+                <p className="mt-1 text-sm text-ink/60">Eventos realizados</p>
               </div>
               <div>
-                <p className="font-serif text-3xl text-terracotta">10+</p>
-                <p className="text-sm text-ink/60">Años de experiencia</p>
+                <p className="font-serif text-4xl text-terracotta">10+</p>
+                <p className="mt-1 text-sm text-ink/60">Años de experiencia</p>
               </div>
             </div>
-            <Link
-              href="https://www.instagram.com/andreadelgadoplanner/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center gap-2 text-sm text-terracotta underline"
-            >
-              Síguenos en Instagram @andreadelgadoplanner
-            </Link>
           </Reveal>
         </div>
       </section>
 
-      {/* Testimonios */}
-      <section className="border-t border-sand">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
+      {/* ── Servicios: tres verticales ─────────────────────────────────────── */}
+      <section id="servicios" className="border-b border-sand bg-white/50">
+        <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
           <Reveal>
-            <p className="eyebrow text-center">Lo que dicen</p>
-            <h2 className="mt-3 text-center font-serif text-4xl">Historias que celebramos</h2>
+            <div className="max-w-2xl">
+              <p className="eyebrow">Lo que diseñamos</p>
+              <h2 className="mt-3 font-serif text-3xl md:text-4xl">Servicios</h2>
+              <p className="mt-4 text-ink/60">
+                Un mismo estándar de detalle para tres formas de celebrar.
+              </p>
+            </div>
           </Reveal>
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {TESTIMONIALS.map((t, i) => (
-              <Reveal key={t.name} delay={i * 100}>
-                <div className="card h-full">
-                  <p className="font-serif text-3xl leading-none text-clay/50">&ldquo;</p>
-                  <p className="mt-2 text-sm text-ink/80">{t.quote}</p>
-                  <p className="mt-5 font-script text-2xl text-terracotta">{t.name}</p>
-                  <p className="text-xs uppercase tracking-luxe text-gold">{t.context}</p>
+
+          <div className="mt-14 grid gap-px overflow-hidden rounded-3xl border border-sand bg-sand md:grid-cols-3">
+            {CATEGORY_META.map((c, i) => (
+              <Reveal key={c.key} delay={i * 100}>
+                <div className="flex h-full flex-col bg-cream p-8 md:p-10">
+                  <span className="font-serif text-sm text-gold">0{i + 1}</span>
+                  <h3 className="mt-4 font-serif text-2xl">{c.label}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-ink/70">{c.blurb}</p>
+                  <Link
+                    href="#portafolio"
+                    className="mt-6 inline-flex items-center gap-2 text-sm text-terracotta transition hover:gap-3"
+                  >
+                    Ver trabajo <span aria-hidden>→</span>
+                  </Link>
                 </div>
               </Reveal>
             ))}
@@ -207,27 +131,104 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA final con detalle visual */}
-      <section className="relative overflow-hidden border-t border-sand bg-protea-700 text-cream">
-        <div className="absolute inset-0 opacity-15">
-          <Image src={DETAIL_IMAGE_1} alt="" fill className="object-cover" sizes="100vw" />
-        </div>
-        <div className="relative mx-auto max-w-4xl px-6 py-24 text-center">
+      {/* ── Portafolio: grid editorial por categoría ───────────────────────── */}
+      <section id="portafolio" className="border-b border-sand">
+        <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
           <Reveal>
-            <p className="text-xs uppercase tracking-luxe text-cream/60">Andrea Delgado</p>
-            <h2 className="mt-4 font-serif text-4xl md:text-5xl">
-              Cada evento es una historia. Contémosla juntos.
+            <div className="max-w-2xl">
+              <p className="eyebrow">Momentos</p>
+              <h2 className="mt-3 font-serif text-3xl md:text-4xl">Portafolio</h2>
+              <p className="mt-4 text-ink/60">
+                Una selección de los eventos que hemos tenido el honor de crear.
+              </p>
+            </div>
+          </Reveal>
+
+          {categories.map((cat) => (
+            <div key={cat.key} className="mt-16 first:mt-14">
+              <div className="mb-6 flex items-baseline justify-between border-b border-sand pb-3">
+                <h3 className="font-serif text-2xl">{cat.label}</h3>
+                <span className="text-xs uppercase tracking-luxe text-gold">
+                  {cat.images.length} {cat.images.length === 1 ? 'evento' : 'eventos'}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+                {cat.images.map((img, i) => (
+                  <Reveal key={`${img.src}-${i}`} delay={Math.min(i, 6) * 60}>
+                    <div className="group relative aspect-[4/5] overflow-hidden rounded-2xl bg-sand">
+                      <Image
+                        src={img.src}
+                        alt={img.alt}
+                        fill
+                        className="object-cover transition duration-700 group-hover:scale-105"
+                        sizes="(min-width: 1024px) 33vw, 50vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-ink/30 via-transparent to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Feature: Gestión de Invitados (RSVP + seating) ─────────────────── */}
+      <section className="border-b border-sand bg-protea-700 text-cream">
+        <div className="mx-auto grid max-w-6xl gap-12 px-6 py-24 md:grid-cols-2 md:items-center md:py-28">
+          <Reveal>
+            <div>
+              <p className="text-xs uppercase tracking-luxe text-cream/60">Tecnología a tu favor</p>
+              <h2 className="mt-4 text-balance font-serif text-3xl leading-tight md:text-4xl">
+                Gestión de invitados, sin hojas de cálculo.
+              </h2>
+              <p className="mt-5 max-w-md text-cream/80">
+                Cada evento incluye nuestra plataforma de confirmaciones: tus invitados responden
+                por WhatsApp y tú ves la asistencia, el menú y el acomodo de mesas actualizándose
+                en tiempo real.
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={150}>
+            <ul className="grid gap-4">
+              {[
+                ['Confirmaciones por WhatsApp', 'Invitaciones y recordatorios automáticos; los invitados confirman con un toque.'],
+                ['Seating en tiempo real', 'Organiza mesas y acompañantes con un tablero que se actualiza al instante.'],
+                ['Tablero en vivo', 'Asistencia, restricciones alimenticias y avances del evento, siempre a la mano.'],
+              ].map(([title, desc]) => (
+                <li key={title} className="rounded-2xl border border-cream/15 bg-cream/[0.06] p-5">
+                  <p className="font-serif text-lg">{title}</p>
+                  <p className="mt-1 text-sm text-cream/70">{desc}</p>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── Contacto: banner previo al footer ──────────────────────────────── */}
+      <section id="contacto" className="relative overflow-hidden">
+        <Image src={CTA_IMAGE} alt="" fill className="object-cover" sizes="100vw" />
+        <div className="absolute inset-0 bg-ink/70" />
+        <div className="relative mx-auto max-w-3xl px-6 py-28 text-center text-cream md:py-36">
+          <Reveal>
+            <p className="text-xs uppercase tracking-luxe text-cream/60">Contacto</p>
+            <h2 className="mt-5 text-balance font-serif text-3xl leading-tight md:text-5xl">
+              ¿Están listos para ver su sueño hecho realidad? Comencemos a planear juntos.
             </h2>
-            <p className="mx-auto mt-6 max-w-xl text-cream/80">
-              Cuéntanos tu visión y recibe una propuesta personalizada en minutos con
-              nuestro cotizador inteligente.
-            </p>
-            <Link
-              href="/cotizar"
-              className="mt-10 inline-flex btn-primary bg-cream text-ink hover:bg-sand"
-            >
-              Comenzar cotización
-            </Link>
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+              <Link href="/cotizar" className="btn-primary bg-cream text-ink hover:bg-sand">
+                Cotizar mi evento
+              </Link>
+              <Link
+                href="https://www.instagram.com/andreadelgadoplanner/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center rounded-full border border-cream/50 px-7 py-3 text-sm font-medium text-cream transition hover:bg-cream/10"
+              >
+                @andreadelgadoplanner
+              </Link>
+            </div>
           </Reveal>
         </div>
       </section>

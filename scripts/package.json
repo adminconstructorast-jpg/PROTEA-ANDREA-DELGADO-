@@ -1,0 +1,14 @@
+{
+  "name": "protea-scripts",
+  "private": true,
+  "type": "module",
+  "description": "Utilidades operativas de PROTEA · Andrea Delgado (fuera del build de la app).",
+  "scripts": {
+    "upload-portfolio": "node upload-portfolio.mjs"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "^7.14.0",
+    "adm-zip": "^0.5.16",
+    "sharp": "^0.33.5"
+  }
+}

@@ -5,10 +5,10 @@ import Link from 'next/link';
 import { Logo } from './Logo';
 
 const NAV_LINKS = [
-  { href: '/#servicios', label: 'Servicios' },
-  { href: '/#portafolio', label: 'Portafolio' },
+  { href: '/#inicio', label: 'Inicio' },
   { href: '/#nosotros', label: 'Nosotros' },
-  { href: '/portal', label: 'Portal' },
+  { href: '/#servicios', label: 'Servicios' },
+  { href: '/#contacto', label: 'Contacto' },
 ];
 
 /** Encabezado del sitio público con navegación premium y menú móvil. */
@@ -30,9 +30,18 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <Link href="/cotizar" className="btn-primary hidden md:inline-flex">
-          Cotizar mi evento
-        </Link>
+        {/* Portal (sutil) + CTA principal */}
+        <div className="hidden items-center gap-5 md:flex">
+          <Link
+            href="/portal"
+            className="text-sm text-ink/60 transition hover:text-terracotta"
+          >
+            Portal
+          </Link>
+          <Link href="/cotizar" className="btn-primary">
+            Cotizar mi evento
+          </Link>
+        </div>
 
         {/* Botón de menú móvil */}
         <button
@@ -71,6 +80,15 @@ export function SiteHeader() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link
+                href="/portal"
+                onClick={() => setOpen(false)}
+                className="block rounded-lg px-3 py-2.5 text-sm text-ink/60 transition hover:bg-sand"
+              >
+                Portal
+              </Link>
+            </li>
           </ul>
           <Link
             href="/cotizar"
