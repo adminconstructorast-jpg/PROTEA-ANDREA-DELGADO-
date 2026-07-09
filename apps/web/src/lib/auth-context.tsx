@@ -18,7 +18,8 @@ import {
   OAuthProvider,
   type User,
 } from 'firebase/auth';
-import { auth } from './firebase';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from './firebase';
 import type { UserRole } from '@protea/shared';
 
 interface AuthState {
@@ -43,6 +44,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
       if (u) {
+        // Alta del perfil la primera vez que se autentica: crea /users/{uid}
+        // sin rol (las reglas lo permiten). Una Cloud Function asigna el rol
+        // como custom claim; por eso forzamos un refresh del token para leerlo.
+        try {
+          const userRef = doc(db, 'users', u.uid);
+          const snap = await getDoc(userRef);
+          if (!snap.exists()) {
+            await setDoc(userRef, {
+              uid: u.uid,
+              displayName: u.displayName ?? u.email?.split('@')[0] ?? 'Usuario',
+              email: u.email ?? '',
+              photoURL: u.photoURL ?? null,
+              createdAt: serverTimestamp(),
+            });
+            // Dar un instante a la Cloud Function para asignar el claim.
+            await new Promise((r) => setTimeout(r, 1500));
+            await u.getIdToken(true);
+          }
+        } catch {
+          // Si falla la creación del perfil, el usuario sigue como 'client'.
+        }
         // El rol vive en los custom claims; se lee del token.
         const token = await u.getIdTokenResult();
         setRole((token.claims.role as UserRole | undefined) ?? 'client');

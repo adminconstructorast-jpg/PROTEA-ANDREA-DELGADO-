@@ -1,61 +1,60 @@
-import * as functionsV1 from 'firebase-functions/v1';
+import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions/v2';
 import { REGION, PLANNER_ADMIN_EMAILS } from '../config.js';
-import { auth, db, FieldValue } from '../lib/admin.js';
+import { auth, db } from '../lib/admin.js';
 import { COLLECTIONS, USER_ROLES, type UserRole } from '../shared.js';
 
 /**
- * Al crear un usuario: asigna rol por defecto (custom claim) y espeja el perfil.
- * Los correos en PLANNER_ADMIN_EMAILS obtienen rol `planner` automáticamente;
- * el resto entra como `client`.
+ * Asignación de rol al registrarse.
  *
- * Se usa un trigger de Auth de 1ª gen (`auth.user().onCreate`) en vez de una
- * blocking function (`beforeUserCreated`), porque las blocking functions solo
- * están disponibles en proyectos con Identity Platform (GCIP) habilitado. El
- * trigger 1st gen funciona con Firebase Auth estándar sin costo adicional; el
- * custom claim se refleja en el token del usuario tras el siguiente refresh
- * (`getIdToken(true)`), que el cliente hace de forma natural en el próximo login.
+ * El cliente crea su documento de perfil en `/users/{uid}` justo tras
+ * autenticarse (las reglas lo permiten para el propio uid, sin incluir `role`).
+ * Este trigger de Firestore (2ª gen) detecta ese alta y asigna el rol
+ * correspondiente como custom claim de Auth + lo refleja en el documento.
+ *
+ * Se usa un trigger de Firestore en lugar de una blocking function de Auth
+ * (`beforeUserCreated`), porque las blocking functions requieren Identity
+ * Platform (GCIP). El custom claim se refleja en el token del usuario tras el
+ * siguiente refresh (`getIdToken(true)`), que el cliente fuerza al registrarse.
+ *
+ * Los correos en PLANNER_ADMIN_EMAILS obtienen rol `planner`; el resto `client`.
  */
-export const onUserCreate = functionsV1
-  .region(REGION)
-  .auth.user()
-  .onCreate(async (user) => {
+export const onUserCreate = onDocumentCreated(
+  { document: 'users/{uid}', region: REGION },
+  async (event) => {
+    const snap = event.data;
+    if (!snap) return;
+
+    const uid = event.params.uid;
+    const data = snap.data() as { email?: string; role?: UserRole };
+
+    // Si ya tiene rol (p. ej. lo creó la planner manualmente), no reprocesar.
+    if (data.role && USER_ROLES.includes(data.role)) return;
+
     const adminEmails = PLANNER_ADMIN_EMAILS.value()
       .split(',')
       .map((e) => e.trim().toLowerCase())
       .filter(Boolean);
 
-    const email = (user.email ?? '').toLowerCase();
+    const email = String(data.email ?? '').toLowerCase();
     const role: UserRole = adminEmails.includes(email) ? 'planner' : 'client';
 
     // El rol vive en el custom claim del token de Auth.
     try {
-      await auth.setCustomUserClaims(user.uid, { role });
+      await auth.setCustomUserClaims(uid, { role });
     } catch (err) {
       logger.error('No se pudo asignar el custom claim de rol', err);
     }
 
-    // Espejo del perfil en Firestore.
+    // Reflejar el rol en el perfil.
     try {
-      await db
-        .collection(COLLECTIONS.USERS)
-        .doc(user.uid)
-        .set(
-          {
-            uid: user.uid,
-            displayName: user.displayName ?? email.split('@')[0] ?? 'Usuario',
-            email: user.email ?? '',
-            photoURL: user.photoURL ?? null,
-            role,
-            createdAt: FieldValue.serverTimestamp(),
-          },
-          { merge: true },
-        );
+      await snap.ref.set({ role }, { merge: true });
     } catch (err) {
-      logger.error('No se pudo crear el perfil de usuario', err);
+      logger.error('No se pudo escribir el rol en el perfil', err);
     }
-  });
+  },
+);
 
 /**
  * Callable (solo planner): cambia el rol de un usuario y sincroniza el claim.
