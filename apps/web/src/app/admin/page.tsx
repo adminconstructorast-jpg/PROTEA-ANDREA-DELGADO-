@@ -16,12 +16,18 @@ import {
   EVENT_TYPE_LABELS,
   LEAD_STATUS_LABELS,
   type Lead,
+  type EventDoc,
 } from '@protea/shared';
+
+/** `rsvpStats` lo agrega la Cloud Function `onGuestWritten` (no está en EventDoc). */
+type EventWithStats = EventDoc & { rsvpStats?: { confirmedSeats?: number; confirmed?: number } };
 
 /** Dashboard central de la planner: resumen de negocio y últimos leads. */
 export default function AdminDashboard() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [newCount, setNewCount] = useState(0);
+  const [activeEvents, setActiveEvents] = useState<number | null>(null);
+  const [confirmations, setConfirmations] = useState<number | null>(null);
 
   useEffect(() => {
     const recentQuery = query(
@@ -36,9 +42,24 @@ export default function AdminDashboard() {
     const newQuery = query(collection(db, COLLECTIONS.LEADS), where('status', '==', 'new'));
     const unsubNew = onSnapshot(newQuery, (snap) => setNewCount(snap.size));
 
+    // Eventos activos (planeación o en curso) y total de confirmaciones en vivo.
+    const unsubEvents = onSnapshot(collection(db, COLLECTIONS.EVENTS), (snap) => {
+      const events = snap.docs.map((d) => d.data() as EventWithStats);
+      setActiveEvents(
+        events.filter((e) => e.status === 'planning' || e.status === 'in_progress').length,
+      );
+      setConfirmations(
+        events.reduce(
+          (sum, e) => sum + (e.rsvpStats?.confirmedSeats ?? e.rsvpStats?.confirmed ?? 0),
+          0,
+        ),
+      );
+    });
+
     return () => {
       unsubRecent();
       unsubNew();
+      unsubEvents();
     };
   }, []);
 
@@ -49,8 +70,16 @@ export default function AdminDashboard() {
 
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         <StatCard label="Leads nuevos" value={newCount} href="/admin/leads" />
-        <StatCard label="Eventos activos" value="—" href="/admin/eventos" />
-        <StatCard label="Confirmaciones" value="En vivo" href="/admin/confirmaciones" />
+        <StatCard
+          label="Eventos activos"
+          value={activeEvents ?? '…'}
+          href="/admin/eventos"
+        />
+        <StatCard
+          label="Confirmaciones"
+          value={confirmations ?? '…'}
+          href="/admin/confirmaciones"
+        />
       </div>
 
       <div className="mt-10">

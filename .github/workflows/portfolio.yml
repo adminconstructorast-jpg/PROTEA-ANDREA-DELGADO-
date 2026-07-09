@@ -1,0 +1,97 @@
+name: Portafolio · Procesar fotos
+
+# Flujo sin terminal para publicar el portafolio completo:
+#   1. Sube tu .zip de fotos UNA vez a Firebase Storage, carpeta `uploads/`
+#      (consola de Firebase → Storage → Subir archivo). Nómbralo, p. ej.,
+#      `portfolio-raw.zip`.
+#   2. Ve a la pestaña "Actions" del repo → "Portafolio · Procesar fotos" →
+#      "Run workflow", confirma el nombre del zip y ejecuta.
+#   3. El flujo lo descarga, optimiza a WebP (máx. 1920px, q80), lo escribe en
+#      apps/web/public/portfolio/, actualiza el JSON, commitea a main y (si hay
+#      VERCEL_TOKEN) publica en Vercel. En ~2 min las fotos están en el sitio.
+#
+# Para dividir por categoría, dentro del zip organiza las fotos en carpetas
+# "Bodas", "Sociales" y "Corporativos". Sin carpetas, todo va a "Bodas".
+
+on:
+  workflow_dispatch:
+    inputs:
+      zip_object:
+        description: 'Ruta del .zip dentro del bucket (dentro de uploads/)'
+        required: true
+        default: 'uploads/portfolio-raw.zip'
+      clean:
+        description: 'Reemplazar el portafolio actual (true) o agregar a lo existente (false)'
+        required: true
+        default: 'true'
+
+permissions:
+  contents: write
+
+env:
+  FIREBASE_PROJECT: protea-andrea-delgado
+  BUCKET: protea-andrea-delgado.firebasestorage.app
+
+jobs:
+  portfolio:
+    name: Optimizar y publicar fotos
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Checkout de main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Autenticación con Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Configurar gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Descargar el .zip desde Firebase Storage
+        run: |
+          echo "Descargando gs://${BUCKET}/${{ inputs.zip_object }} …"
+          gcloud storage cp "gs://${BUCKET}/${{ inputs.zip_object }}" ./portfolio-raw.zip
+          ls -lh ./portfolio-raw.zip
+
+      - name: Instalar dependencias del script
+        run: cd scripts && npm install --no-audit --no-fund
+
+      - name: Optimizar fotos y regenerar JSON
+        run: |
+          node scripts/process-portfolio.mjs \
+            --zip ./portfolio-raw.zip \
+            ${{ inputs.clean == 'true' && '--clean' || '' }}
+
+      - name: Commit del portafolio a main
+        run: |
+          rm -f ./portfolio-raw.zip
+          git config user.name 'protea-bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add apps/web/public/portfolio apps/web/src/data/portfolio-urls.json
+          if git diff --cached --quiet; then
+            echo 'No hubo cambios en el portafolio.'
+            exit 0
+          fi
+          git commit -m "chore(portafolio): fotos optimizadas del portafolio [skip ci]"
+          git push origin main
+
+      - name: Publicar en Vercel (si hay VERCEL_TOKEN)
+        if: env.VERCEL_TOKEN != ''
+        run: |
+          npx --yes vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
+          npx --yes vercel@latest build --prod --token="$VERCEL_TOKEN"
+          npx --yes vercel@latest deploy --prebuilt --prod --token="$VERCEL_TOKEN" --yes
+
+      - name: Nota si falta VERCEL_TOKEN
+        if: env.VERCEL_TOKEN == ''
+        run: |
+          echo '::notice::Fotos commiteadas a main. Falta el secreto VERCEL_TOKEN para publicar automáticamente; ejecuta "vercel deploy --prod" o agrega el token para que el flujo publique solo.'
