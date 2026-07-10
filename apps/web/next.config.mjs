@@ -9,6 +9,8 @@ const nextConfig = {
       // URLs públicas de objetos de Firebase Storage tras makePublic()
       // (las que genera scripts/upload-portfolio.mjs para el portafolio).
       { protocol: 'https', hostname: 'storage.googleapis.com' },
+      // Avatares de cuentas de Google (fotos de perfil en /admin/usuarios).
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
     ],
   },
   webpack: (config) => {
