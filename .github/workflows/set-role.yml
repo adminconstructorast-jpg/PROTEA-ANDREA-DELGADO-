@@ -1,0 +1,56 @@
+# Herramienta operativa: asigna el rol de plataforma (planner / staff / client)
+# a un usuario ya registrado en Firebase Auth, sin necesidad de terminal.
+# Solo pueden dispararla colaboradores con acceso de escritura al repo.
+name: Rol · Asignar acceso
+
+on:
+  workflow_dispatch:
+    inputs:
+      email:
+        description: 'Correo del usuario (debe haber iniciado sesión al menos una vez)'
+        required: true
+        type: string
+      role:
+        description: 'Rol a asignar'
+        required: true
+        default: 'planner'
+        type: choice
+        options:
+          - planner
+          - staff
+          - client
+
+concurrency: set-role
+
+env:
+  FIREBASE_PROJECT: protea-andrea-delgado
+
+jobs:
+  set-role:
+    name: Asignar rol
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # firebase-admin viene del workspace `functions` (hoisted a la raíz).
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Autenticación con Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Asignar rol
+        run: node scripts/set-role.mjs --email "${{ inputs.email }}" --role "${{ inputs.role }}"
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
+          FIREBASE_PROJECT_ID: ${{ env.FIREBASE_PROJECT }}
