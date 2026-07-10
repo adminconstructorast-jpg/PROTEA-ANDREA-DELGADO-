@@ -6,7 +6,12 @@
  * credenciales de la cuenta de servicio (`GOOGLE_APPLICATION_CREDENTIALS`),
  * aunque también funciona localmente con una clave de servicio.
  *
- * Uso: node scripts/set-role.mjs --email correo@dominio.com --role planner
+ * Uso: node scripts/set-role.mjs --email correo@dominio.com --role planner [--create]
+ *
+ * Con `--create`, si el correo aún no existe en Firebase Auth se PRE-CREA la
+ * cuenta con el rol asignado: al iniciar sesión con Google por primera vez,
+ * Firebase vincula el proveedor a esa cuenta (misma dirección) y el primer
+ * token ya trae el claim — el usuario entra al panel con un solo login.
  */
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -26,6 +31,7 @@ function arg(name) {
 
 const email = arg('email');
 const role = arg('role');
+const createIfMissing = process.argv.includes('--create');
 
 if (!email || !email.includes('@')) {
   console.error('✗ Falta --email válido');
@@ -44,12 +50,19 @@ const auth = admin.auth();
 const db = admin.firestore();
 
 let user;
+let created = false;
 try {
   user = await auth.getUserByEmail(email);
 } catch {
-  console.error(`✗ No existe un usuario de Firebase Auth con el correo ${email}.`);
-  console.error('  El usuario debe iniciar sesión en el sitio al menos una vez antes.');
-  process.exit(1);
+  if (!createIfMissing) {
+    console.error(`✗ No existe un usuario de Firebase Auth con el correo ${email}.`);
+    console.error('  El usuario debe iniciar sesión en el sitio al menos una vez antes,');
+    console.error('  o vuelve a correr con la opción de crear la cuenta.');
+    process.exit(1);
+  }
+  user = await auth.createUser({ email, emailVerified: false });
+  created = true;
+  console.log(`• Cuenta pre-creada para ${email} (uid ${user.uid}).`);
 }
 
 // 1) Custom claim: es lo que leen AuthGate y las reglas de Firestore.
@@ -69,7 +82,14 @@ await db.collection('users').doc(user.uid).set(
 
 // 3) Invalidar los refresh tokens: la sesión abierta pedirá re-autenticarse
 //    y el nuevo token ya traerá el claim (sin esperar la expiración de 1h).
-await auth.revokeRefreshTokens(user.uid);
+//    (Innecesario para cuentas recién pre-creadas: no hay sesión que invalidar.)
+if (!created) {
+  await auth.revokeRefreshTokens(user.uid);
+}
 
 console.log(`✓ ${email} (uid ${user.uid}) ahora tiene rol "${role}".`);
-console.log('  El usuario debe cerrar sesión y volver a entrar para ver el cambio.');
+console.log(
+  created
+    ? '  Al iniciar sesión con Google por primera vez entrará directo con ese rol.'
+    : '  El usuario debe cerrar sesión y volver a entrar para ver el cambio.',
+);
