@@ -19,6 +19,11 @@ on:
           - planner
           - staff
           - client
+      create_if_missing:
+        description: 'Pre-crear la cuenta si aún no ha iniciado sesión (entrará directo con el rol)'
+        required: false
+        default: true
+        type: boolean
 
 concurrency: set-role
 
@@ -50,7 +55,7 @@ jobs:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Asignar rol
-        run: node scripts/set-role.mjs --email "${{ inputs.email }}" --role "${{ inputs.role }}"
+        run: node scripts/set-role.mjs --email "${{ inputs.email }}" --role "${{ inputs.role }}" ${{ inputs.create_if_missing && '--create' || '' }}
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
           FIREBASE_PROJECT_ID: ${{ env.FIREBASE_PROJECT }}
