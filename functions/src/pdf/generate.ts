@@ -1,9 +1,6 @@
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions/v2';
-import puppeteer from 'puppeteer';
-import { promises as fs } from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import PDFDocument from 'pdfkit';
 import {
   REGION,
   APP_CHECK_ENFORCE,
@@ -16,9 +13,6 @@ import {
   eventDisplayLabel,
   type Lead,
 } from '../shared.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Descripciones de soporte para los servicios en la cotización
 const SERVICE_DESCRIPTIONS: Record<string, string> = {
@@ -40,9 +34,255 @@ function getServiceDescription(serviceKey: string): string {
   return SERVICE_DESCRIPTIONS[serviceKey] || 'Servicio de diseño y coordinación personalizada adaptada al evento.';
 }
 
+function createPdfBuffer(lead: Lead): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    try {
+      const doc = new PDFDocument({
+        size: 'A4',
+        margin: 40,
+        bufferPages: true,
+      });
+      const chunks: Buffer[] = [];
+      doc.on('data', chunk => chunks.push(chunk));
+      doc.on('end', () => resolve(Buffer.concat(chunks)));
+      doc.on('error', err => reject(err));
+
+      // ── ENCABEZADO ──
+      // Dibujar Marca
+      doc.fillColor('#b08968')
+         .fontSize(22)
+         .font('Helvetica-Bold')
+         .text('ANDREA DELGADO', 40, 45, { characterSpacing: 2 });
+         
+      doc.fillColor('#1c1a17')
+         .fontSize(7.5)
+         .font('Helvetica')
+         .text('WEDDING & EVENT PLANNER', 40, 72, { characterSpacing: 3 });
+
+      // Datos de Cotización (a la derecha)
+      const dateGenerated = new Date().toLocaleDateString('es-MX', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      doc.fillColor('#1c1a17')
+         .fontSize(13)
+         .font('Helvetica-Bold')
+         .text('ESTIMACIÓN DE EVENTO', 320, 45, { align: 'right' });
+
+      doc.fillColor('#6a645a')
+         .fontSize(8)
+         .font('Helvetica')
+         .text(`Ref: #${lead.id.substring(0, 8).toUpperCase()}`, 320, 62, { align: 'right' })
+         .text(`Fecha Emisión: ${dateGenerated}`, 320, 74, { align: 'right' });
+
+      // Línea divisoria
+      doc.moveTo(40, 95)
+         .lineTo(555, 95)
+         .strokeColor('#e5dfd5')
+         .lineWidth(1)
+         .stroke();
+
+      // ── CUADRÍCULA DE INFORMACIÓN ──
+      // Sección de la izquierda (Contacto)
+      doc.fillColor('#fcfbfa')
+         .rect(40, 115, 245, 110)
+         .fill()
+         .strokeColor('#f2ede4')
+         .lineWidth(1)
+         .stroke();
+
+      doc.fillColor('#b08968')
+         .fontSize(9)
+         .font('Helvetica-Bold')
+         .text('CONTACTO', 55, 130);
+
+      doc.moveTo(55, 143).lineTo(270, 143).strokeColor('#e5dfd5').stroke();
+
+      doc.fillColor('#6a645a').fontSize(8.5).font('Helvetica-Bold').text('Nombre: ', 55, 155);
+      doc.fillColor('#1c1a17').font('Helvetica').text(lead.contact.fullName, 115, 155);
+
+      doc.fillColor('#6a645a').font('Helvetica-Bold').text('Email: ', 55, 175);
+      doc.fillColor('#1c1a17').font('Helvetica').text(lead.contact.email, 115, 175);
+
+      doc.fillColor('#6a645a').font('Helvetica-Bold').text('Teléfono: ', 55, 195);
+      doc.fillColor('#1c1a17').font('Helvetica').text(lead.contact.phone, 115, 195);
+
+      // Sección de la derecha (Detalles del Evento)
+      doc.fillColor('#fcfbfa')
+         .rect(310, 115, 245, 110)
+         .fill()
+         .strokeColor('#f2ede4')
+         .lineWidth(1)
+         .stroke();
+
+      doc.fillColor('#b08968')
+         .fontSize(9)
+         .font('Helvetica-Bold')
+         .text('DETALLES DEL EVENTO', 325, 130);
+
+      doc.moveTo(325, 143).lineTo(540, 143).strokeColor('#e5dfd5').stroke();
+
+      const displayType = eventDisplayLabel(lead.eventType, lead.eventSubtype);
+      doc.fillColor('#6a645a').fontSize(8.5).font('Helvetica-Bold').text('Tipo: ', 325, 155);
+      doc.fillColor('#1c1a17').font('Helvetica').text(displayType, 395, 155);
+
+      doc.fillColor('#6a645a').font('Helvetica-Bold').text('Fecha: ', 325, 170);
+      doc.fillColor('#1c1a17').font('Helvetica').text(lead.tentativeDate || 'Flexible / Pendiente', 395, 170);
+
+      doc.fillColor('#6a645a').font('Helvetica-Bold').text('Invitados: ', 325, 185);
+      doc.fillColor('#1c1a17').font('Helvetica').text(`${lead.guestCount} pax`, 395, 185);
+
+      const venueLabel = lead.hasVenue ? (lead.venueName || 'Venue Confirmado') : 'Buscando locación';
+      doc.fillColor('#6a645a').font('Helvetica-Bold').text('Lugar: ', 325, 200);
+      doc.fillColor('#1c1a17').font('Helvetica').text(`${venueLabel} (${lead.city || 'N/D'})`, 395, 200);
+
+      // ── PROPUESTA DE SERVICIOS (TABLA DIBUJADA) ──
+      doc.fillColor('#1c1a17')
+         .fontSize(10)
+         .font('Helvetica-Bold')
+         .text('PROPUESTA DE SERVICIOS', 40, 250);
+
+      doc.moveTo(40, 263)
+         .lineTo(555, 263)
+         .strokeColor('#b08968')
+         .lineWidth(2)
+         .stroke();
+
+      // Encabezados de la Tabla
+      doc.fillColor('#f5f2eb')
+         .rect(40, 270, 515, 22)
+         .fill();
+
+      doc.fillColor('#1c1a17')
+         .fontSize(8.5)
+         .font('Helvetica-Bold')
+         .text('SERVICIO REQUERIDO', 50, 277)
+         .text('DESCRIPCIÓN GENERAL / ALCANCE SUGERIDO', 220, 277);
+
+      // Filas de la Tabla
+      let currentY = 295;
+      const rowHeight = 42;
+
+      if (lead.services && lead.services.length > 0) {
+        lead.services.forEach((srv) => {
+          if (currentY + rowHeight > 730) {
+            doc.addPage();
+            currentY = 50;
+            // Volver a dibujar cabeceras en nueva página
+            doc.fillColor('#f5f2eb')
+               .rect(40, currentY, 515, 22)
+               .fill();
+            doc.fillColor('#1c1a17')
+               .fontSize(8.5)
+               .font('Helvetica-Bold')
+               .text('SERVICIO REQUERIDO', 50, currentY + 7)
+               .text('DESCRIPCIÓN GENERAL / ALCANCE SUGERIDO', 220, currentY + 7);
+            currentY += 25;
+          }
+
+          const label = SERVICE_LABELS[srv] || srv;
+          const desc = getServiceDescription(srv);
+
+          doc.fillColor('#1c1a17')
+             .fontSize(8.5)
+             .font('Helvetica-Bold')
+             .text(label, 50, currentY + 5, { width: 160 });
+
+          doc.fillColor('#3a3732')
+             .font('Helvetica')
+             .fontSize(8)
+             .text(desc, 220, currentY + 5, { width: 325, align: 'justify' });
+
+          doc.moveTo(40, currentY + rowHeight - 2)
+             .lineTo(555, currentY + rowHeight - 2)
+             .strokeColor('#f2ede4')
+             .lineWidth(1)
+             .stroke();
+
+          currentY += rowHeight;
+        });
+      } else {
+        doc.fillColor('#8b8377')
+           .font('Helvetica')
+           .fontSize(9)
+           .text('No se han seleccionado servicios específicos en la solicitud.', 40, currentY + 10, { align: 'center' });
+        currentY += 30;
+      }
+
+      // ── NOTAS DEL CLIENTE (MENSAJE) ──
+      if (lead.message && lead.message.trim().length > 0) {
+        if (currentY + 60 > 730) {
+          doc.addPage();
+          currentY = 50;
+        }
+
+        doc.fillColor('#fcfbfa')
+           .rect(40, currentY + 10, 515, 50)
+           .fill()
+           .strokeColor('#b08968')
+           .lineWidth(1)
+           .stroke();
+           
+        // Línea izquierda gruesa terracota
+        doc.moveTo(40, currentY + 10)
+           .lineTo(40, currentY + 60)
+           .strokeColor('#b08968')
+           .lineWidth(3)
+           .stroke();
+
+        doc.fillColor('#1c1a17')
+           .fontSize(8)
+           .font('Helvetica-Bold')
+           .text('Mensaje de Inspiración o Notas del Cliente:', 50, currentY + 18);
+
+        doc.fillColor('#6a645a')
+           .font('Helvetica-Oblique')
+           .text(`"${lead.message}"`, 50, currentY + 32, { width: 495 });
+           
+        currentY += 70;
+      }
+
+      // ── TÉRMINOS Y CONDICIONES (PIE DE PÁGINA) ──
+      const range = doc.bufferedPageRange();
+      for (let i = 0; i < range.count; i++) {
+        doc.switchToPage(i);
+        
+        doc.moveTo(40, 735)
+           .lineTo(555, 735)
+           .strokeColor('#e5dfd5')
+           .lineWidth(1)
+           .stroke();
+
+        doc.fillColor('#8b8377')
+           .fontSize(7)
+           .font('Helvetica')
+           .text('Notas Importantes:', 40, 742)
+           .text('1. Esta es una estimación conceptual inicial basada en los datos proporcionados en el formulario web. No representa una cotización final ni un contrato.', 40, 750)
+           .text('2. La disponibilidad de la fecha tentativa queda sujeta a confirmación al momento del contacto directo y anticipo correspondiente.', 40, 758)
+           .text('3. Los costos reales de proveedores externos (venues, catering, etc.) se cotizarán de forma personalizada en la etapa de planeación.', 40, 766);
+
+        doc.fillColor('#b08968')
+           .fontSize(8.5)
+           .font('Helvetica-Bold')
+           .text('Andrea Delgado · Wedding & Event Planner', 40, 785, { align: 'center' });
+
+        // Número de página
+        doc.fillColor('#6a645a')
+           .fontSize(7.5)
+           .font('Helvetica')
+           .text(`Página ${i + 1} de ${range.count}`, 40, 800, { align: 'right' });
+      }
+
+      doc.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 export const generateQuotePdf = onCall({
   region: REGION,
-  memory: '2GiB', // Mayor RAM requerida para iniciar Chromium headless
 }, async (request) => {
   // Verificación de App Check (sigue la política de flexibilización por APP_CHECK_ENFORCE)
   if (APP_CHECK_ENFORCE.value() === 'true' && !request.app) {
@@ -55,7 +295,7 @@ export const generateQuotePdf = onCall({
     throw new HttpsError('invalid-argument', 'El parámetro leadId es requerido.');
   }
 
-  logger.info(`Iniciando generación de PDF para el Lead: ${leadId}`);
+  logger.info(`Iniciando generación de PDF (PDFKit) para el Lead: ${leadId}`);
 
   try {
     // 1. Obtener información del Lead desde Firestore
@@ -65,99 +305,13 @@ export const generateQuotePdf = onCall({
     }
 
     const lead = { id: leadDoc.id, ...leadDoc.data() } as Lead;
-    const { contact, eventType, eventSubtype, tentativeDate, guestCount, hasVenue, venueName, city, budgetRange, services, message } = lead;
 
-    // 2. Cargar la plantilla HTML
-    const templatePath = path.join(__dirname, '../../../../src/templates/quote-template.html');
-    let htmlContent = await fs.readFile(templatePath, 'utf-8');
+    // 2. Generar el PDF usando PDFKit en memoria
+    logger.info('Generando PDFKit buffer...');
+    const pdfBuffer = await createPdfBuffer(lead);
+    logger.info('PDFKit generado exitosamente.');
 
-    // 3. Formatear y mapear los datos para el reemplazo
-    const formattedDate = tentativeDate || 'Flexible / Pendiente de definir';
-    const venueLabel = hasVenue 
-      ? `${venueName || 'Venue Confirmado'}` 
-      : 'Buscando locación';
-    const cityLabel = city ? `${city}` : 'Pendiente de definir';
-    const displayType = eventDisplayLabel(eventType, eventSubtype);
-    const budgetLabel = BUDGET_RANGE_LABELS[budgetRange] || 'Pendiente de definir';
-    const dateGenerated = new Date().toLocaleDateString('es-MX', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-
-    // Construcción de la tabla de servicios en HTML
-    let servicesTableHtml = '';
-    if (services && services.length > 0) {
-      servicesTableHtml = services.map((srv) => {
-        const label = SERVICE_LABELS[srv] || srv;
-        const desc = getServiceDescription(srv);
-        return `
-          <tr>
-            <td style="font-weight: 500; color: #1c1a17;">${label}</td>
-            <td>${desc}</td>
-          </tr>
-        `;
-      }).join('');
-    } else {
-      servicesTableHtml = `
-        <tr>
-          <td colspan="2" style="text-align: center; color: #8b8377;">No se han seleccionado servicios específicos en la solicitud.</td>
-        </tr>
-      `;
-    }
-
-    // Caja de mensaje del cliente (si existe)
-    let messageBoxHtml = '';
-    if (message && message.trim().length > 0) {
-      messageBoxHtml = `
-        <div class="message-box">
-          <div class="message-title">Mensaje de Inspiración o Notas del Cliente</div>
-          "${message}"
-        </div>
-      `;
-    }
-
-    // Reemplazos de placeholders
-    htmlContent = htmlContent
-      .replace(/{{cotizacionId}}/g, leadId.substring(0, 8).toUpperCase())
-      .replace(/{{fechaEmision}}/g, dateGenerated)
-      .replace(/{{nombre}}/g, contact.fullName)
-      .replace(/{{email}}/g, contact.email)
-      .replace(/{{telefono}}/g, contact.phone)
-      .replace(/{{tipoEvento}}/g, displayType)
-      .replace(/{{fechaEvento}}/g, formattedDate)
-      .replace(/{{invitados}}/g, String(guestCount))
-      .replace(/{{lugar}}/g, `${venueLabel} (${cityLabel})`)
-      .replace(/{{presupuesto}}/g, budgetLabel)
-      .replace(/{{tablaServicios}}/g, servicesTableHtml)
-      .replace(/{{mensajeBox}}/g, messageBoxHtml);
-
-    // 4. Renderizar el PDF usando Puppeteer Headless Chromium
-    logger.info('Iniciando Puppeteer headless browser...');
-    const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      headless: true,
-    });
-
-    const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' as any });
-    
-    // Generar buffer
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        top: '20mm',
-        bottom: '20mm',
-        left: '15mm',
-        right: '15mm',
-      }
-    });
-
-    await browser.close();
-    logger.info('Puppeteer PDF generado con éxito.');
-
-    // 5. Subir a Firebase Storage
+    // 3. Subir a Firebase Storage
     const bucket = storage.bucket();
     const filePath = `quotes/${leadId}_cotizacion.pdf`;
     const fileRef = bucket.file(filePath);
@@ -168,12 +322,12 @@ export const generateQuotePdf = onCall({
       metadata: {
         metadata: {
           leadId: leadId,
-          generator: 'generateQuotePdf',
+          generator: 'generateQuotePdf-pdfkit',
         }
       }
     });
 
-    // 6. Obtener URL de descarga firmada (Signed URL) que expire en 7 días
+    // 4. Obtener URL de descarga firmada (Signed URL) que expire en 7 días
     logger.info('Generando Signed URL...');
     const [downloadUrl] = await fileRef.getSignedUrl({
       action: 'read',

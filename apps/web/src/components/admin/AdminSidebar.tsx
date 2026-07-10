@@ -15,6 +15,7 @@ const NAV = [
   { href: '/admin/calendario', label: 'Calendario' },
   { href: '/admin/leads', label: 'Clientes' },
   { href: '/admin/eventos', label: 'Proyectos' },
+  { href: '/admin/catalog', label: 'Catálogo' },
   { href: '/admin/confirmaciones', label: 'Messenger' },
   { href: '/admin/chats', label: 'Chats' },
   { href: '/admin/correo', label: 'Correo' },
