@@ -40,6 +40,50 @@ export const EVENT_TYPE_LABELS: Record<EventType, string> = {
   social: 'Evento social',
 };
 
+/** Subtipos de evento por tipo (segundo nivel del cotizador). */
+export const EVENT_SUBTYPES = {
+  wedding: ['traditional_wedding', 'anniversary_dinner', 'silver_gold_wedding'],
+  social: ['birthday', 'bachelor_party', 'baptism_communion', 'baby_shower'],
+  corporate: ['posada', 'company_anniversary', 'brand_launch', 'congress_convention'],
+} as const satisfies Record<EventType, readonly string[]>;
+
+export type EventSubtype = (typeof EVENT_SUBTYPES)[EventType][number];
+
+/** Lista plana de subtipos (tupla no vacía, requisito de z.enum). */
+export const ALL_EVENT_SUBTYPES = [
+  ...EVENT_SUBTYPES.wedding,
+  ...EVENT_SUBTYPES.social,
+  ...EVENT_SUBTYPES.corporate,
+] as const;
+
+export const EVENT_SUBTYPE_LABELS: Record<EventSubtype, string> = {
+  traditional_wedding: 'Boda tradicional',
+  anniversary_dinner: 'Cenas de aniversario',
+  silver_gold_wedding: 'Bodas de plata / oro',
+  birthday: 'Cumpleaños',
+  bachelor_party: 'Despedida de soltera/o',
+  baptism_communion: 'Bautizo / Primera Comunión',
+  baby_shower: 'Baby Shower',
+  posada: 'Posada',
+  company_anniversary: 'Aniversario de empresa',
+  brand_launch: 'Lanzamiento de marca',
+  congress_convention: 'Congreso / Convención',
+};
+
+/** ¿El subtipo pertenece al tipo de evento elegido? */
+export function isEventSubtypeOf(type: EventType, subtype: string): subtype is EventSubtype {
+  return (EVENT_SUBTYPES[type] as readonly string[]).includes(subtype);
+}
+
+/**
+ * Etiqueta a mostrar en CRM y notificaciones: la ocasión específica si el
+ * lead la trae, con respaldo al tipo (leads creados antes de los subtipos).
+ */
+export function eventDisplayLabel(type: EventType, subtype?: EventSubtype | null): string {
+  if (subtype && EVENT_SUBTYPE_LABELS[subtype]) return EVENT_SUBTYPE_LABELS[subtype];
+  return EVENT_TYPE_LABELS[type] ?? type;
+}
+
 /** Etapas del pipeline de ventas (CRM). */
 export const LEAD_STATUSES = [
   'new',

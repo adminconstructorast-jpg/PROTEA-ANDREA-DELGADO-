@@ -11,9 +11,10 @@ import {
   onSnapshot,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { AdminCalendar } from '@/components/admin/AdminCalendar';
 import {
   COLLECTIONS,
-  EVENT_TYPE_LABELS,
+  eventDisplayLabel,
   LEAD_STATUS_LABELS,
   type Lead,
   type EventDoc,
@@ -82,6 +83,19 @@ export default function AdminDashboard() {
         />
       </div>
 
+      {/* Agenda del mes (calendario compacto; la vista completa vive en /admin/calendario). */}
+      <div className="mt-10">
+        <div className="flex items-center justify-between">
+          <h2 className="font-serif text-2xl">Agenda del mes</h2>
+          <Link href="/admin/calendario" className="text-sm text-terracotta">
+            Ver calendario →
+          </Link>
+        </div>
+        <div className="mt-4">
+          <AdminCalendar compact />
+        </div>
+      </div>
+
       <div className="mt-10">
         <div className="flex items-center justify-between">
           <h2 className="font-serif text-2xl">Últimos prospectos</h2>
@@ -104,7 +118,7 @@ export default function AdminDashboard() {
               {leads.map((lead) => (
                 <tr key={lead.id} className="hover:bg-sand/20">
                   <td className="px-4 py-3 font-medium">{lead.contact.fullName}</td>
-                  <td className="px-4 py-3">{EVENT_TYPE_LABELS[lead.eventType]}</td>
+                  <td className="px-4 py-3">{eventDisplayLabel(lead.eventType, lead.eventSubtype)}</td>
                   <td className="px-4 py-3">{lead.guestCount}</td>
                   <td className="px-4 py-3">{lead.score ?? '—'}</td>
                   <td className="px-4 py-3">

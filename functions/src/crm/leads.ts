@@ -16,7 +16,7 @@ import {
   COLLECTIONS,
   quoteRequestSchema,
   normalizePhone,
-  EVENT_TYPE_LABELS,
+  eventDisplayLabel,
   SERVICE_LABELS,
   BUDGET_RANGE_LABELS,
   type Lead,
@@ -74,6 +74,7 @@ export const submitQuoteRequest = onCall({ region: REGION }, async (request) => 
   const leadRef = await db.collection(COLLECTIONS.LEADS).add({
     contact: { fullName: d.fullName, email: d.email, phone },
     eventType: d.eventType,
+    eventSubtype: d.eventSubtype ?? null,
     tentativeDate: d.tentativeDate,
     dateIsFlexible: d.dateIsFlexible,
     guestCount: d.guestCount,
@@ -117,7 +118,8 @@ export const onLeadCreated = onDocumentCreated(
       lead.score = score;
     }
 
-    const eventLabel = EVENT_TYPE_LABELS[lead.eventType] ?? lead.eventType;
+    // Ocasión específica si el lead la trae; si no, el tipo genérico.
+    const eventLabel = eventDisplayLabel(lead.eventType, lead.eventSubtype);
     const servicesLabel = (lead.services ?? [])
       .map((s) => SERVICE_LABELS[s] ?? s)
       .join(', ');
