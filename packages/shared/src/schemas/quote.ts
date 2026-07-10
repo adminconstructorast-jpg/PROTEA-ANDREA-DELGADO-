@@ -1,8 +1,10 @@
 import { z } from 'zod';
 import {
+  ALL_EVENT_SUBTYPES,
   BUDGET_RANGES,
   EVENT_TYPES,
   SERVICE_OPTIONS,
+  isEventSubtypeOf,
 } from '../constants.js';
 
 /**
@@ -11,11 +13,37 @@ import {
  * (API route / Cloud Function) como única fuente de verdad.
  */
 
-export const quoteStepEventSchema = z.object({
+/**
+ * Campos del paso 1. Se mantienen como objeto base (sin effects) porque
+ * `quoteRequestSchema` los necesita para `.merge()`; la coherencia
+ * tipo↔subtipo se aplica aparte con `refineEventSubtype`.
+ */
+const quoteStepEventFields = z.object({
   eventType: z.enum(EVENT_TYPES, {
     required_error: 'Cuéntanos qué tipo de evento sueñas',
   }),
+  eventSubtype: z.enum(ALL_EVENT_SUBTYPES, {
+    required_error: 'Elige la ocasión que celebrarás',
+    invalid_type_error: 'Elige la ocasión que celebrarás',
+  }),
 });
+
+/** El subtipo (si viene) debe pertenecer al tipo elegido. */
+function refineEventSubtype(
+  data: { eventType: (typeof EVENT_TYPES)[number]; eventSubtype?: string },
+  ctx: z.RefinementCtx,
+): void {
+  if (data.eventSubtype && !isEventSubtypeOf(data.eventType, data.eventSubtype)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['eventSubtype'],
+      message: 'La ocasión elegida no corresponde al tipo de evento',
+    });
+  }
+}
+
+/** Paso 1 del wizard: en el cliente la ocasión es obligatoria. */
+export const quoteStepEventSchema = quoteStepEventFields.superRefine(refineEventSubtype);
 
 export const quoteStepDateSchema = z
   .object({
@@ -75,8 +103,14 @@ export const quoteStepContactSchema = z.object({
   }),
 });
 
-/** Payload completo que envía el cotizador al backend. */
-export const quoteRequestSchema = quoteStepEventSchema
+/**
+ * Payload completo que envía el cotizador al backend.
+ * `eventSubtype` es OPCIONAL aquí (a diferencia del paso en el cliente) para
+ * tolerar navegadores con el bundle web anterior y no depender del orden de
+ * despliegue entre las funciones y el frontend.
+ */
+export const quoteRequestSchema = quoteStepEventFields
+  .partial({ eventSubtype: true })
   .merge(quoteStepDateSchema.innerType())
   .merge(quoteStepVenueSchema.innerType())
   .merge(quoteStepServicesSchema)
@@ -85,7 +119,8 @@ export const quoteRequestSchema = quoteStepEventSchema
     utm: z
       .record(z.enum(['source', 'medium', 'campaign', 'term', 'content']), z.string().max(200))
       .optional(),
-  });
+  })
+  .superRefine(refineEventSubtype);
 
 export type QuoteRequestInput = z.infer<typeof quoteRequestSchema>;
 

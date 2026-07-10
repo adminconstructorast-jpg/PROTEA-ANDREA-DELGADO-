@@ -1,5 +1,6 @@
 import type {
   BudgetRange,
+  EventSubtype,
   EventType,
   LeadStatus,
   ServiceOption,
@@ -16,6 +17,8 @@ export interface Lead extends AuditFields {
 
   // ── Datos capturados por el cotizador multi-step ──
   eventType: EventType;
+  /** Ocasión específica dentro del tipo (leads antiguos no la tienen). */
+  eventSubtype?: EventSubtype | null;
   /** Fecha tentativa del evento (ISO yyyy-mm-dd); puede ser null si no la saben. */
   tentativeDate: string | null;
   /** ¿La fecha es flexible? */

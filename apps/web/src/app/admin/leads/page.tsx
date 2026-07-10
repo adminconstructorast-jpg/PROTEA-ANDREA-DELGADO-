@@ -7,7 +7,7 @@ import {
   COLLECTIONS,
   LEAD_STATUSES,
   LEAD_STATUS_LABELS,
-  EVENT_TYPE_LABELS,
+  eventDisplayLabel,
   BUDGET_RANGE_LABELS,
   type Lead,
 } from '@protea/shared';
@@ -44,7 +44,7 @@ export default function LeadsPage() {
                   <div key={lead.id} className="card p-4">
                     <p className="font-medium">{lead.contact.fullName}</p>
                     <p className="mt-1 text-xs text-ink/60">
-                      {EVENT_TYPE_LABELS[lead.eventType]} · {lead.guestCount} inv.
+                      {eventDisplayLabel(lead.eventType, lead.eventSubtype)} · {lead.guestCount} inv.
                     </p>
                     <p className="mt-2 text-xs text-ink/50">
                       {BUDGET_RANGE_LABELS[lead.budgetRange]}

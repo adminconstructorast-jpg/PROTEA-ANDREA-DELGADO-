@@ -12,11 +12,14 @@ import {
   quoteStepContactSchema,
   EVENT_TYPES,
   EVENT_TYPE_LABELS,
+  EVENT_SUBTYPES,
+  EVENT_SUBTYPE_LABELS,
   SERVICE_OPTIONS,
   SERVICE_LABELS,
   BUDGET_RANGES,
   BUDGET_RANGE_LABELS,
   type EventType,
+  type EventSubtype,
   type ServiceOption,
   type BudgetRange,
 } from '@protea/shared';
@@ -24,6 +27,8 @@ import {
 /** Estado acumulado del formulario a lo largo de los pasos. */
 interface WizardData {
   eventType?: EventType;
+  /** Ocasión específica; depende del tipo elegido. */
+  eventSubtype?: EventSubtype;
   tentativeDate: string | null;
   dateIsFlexible: boolean;
   guestCount: string;
@@ -78,7 +83,10 @@ export function QuoteWizard() {
     let result: { success: boolean; error?: { issues: { path: (string | number)[]; message: string }[] } };
     switch (step) {
       case 0:
-        result = quoteStepEventSchema.safeParse({ eventType: data.eventType });
+        result = quoteStepEventSchema.safeParse({
+          eventType: data.eventType,
+          eventSubtype: data.eventSubtype,
+        });
         break;
       case 1:
         result = quoteStepDateSchema.safeParse({
@@ -147,6 +155,7 @@ export function QuoteWizard() {
       const submitQuote = httpsCallable(functions, 'submitQuoteRequest');
       await submitQuote({
         eventType: data.eventType,
+        eventSubtype: data.eventSubtype,
         tentativeDate: data.tentativeDate,
         dateIsFlexible: data.dateIsFlexible,
         guestCount: Number(data.guestCount),
@@ -206,7 +215,7 @@ export function QuoteWizard() {
         </div>
       </div>
 
-      {/* Paso 0: tipo de evento */}
+      {/* Paso 0: tipo de evento + ocasión específica */}
       {step === 0 && (
         <StepShell title="¿Qué tipo de evento sueñas?">
           <div className="grid gap-3 sm:grid-cols-3">
@@ -214,7 +223,13 @@ export function QuoteWizard() {
               <button
                 key={t}
                 type="button"
-                onClick={() => patch({ eventType: t })}
+                // Cambiar de tipo invalida la ocasión elegida del tipo anterior.
+                onClick={() =>
+                  patch({
+                    eventType: t,
+                    eventSubtype: data.eventType === t ? data.eventSubtype : undefined,
+                  })
+                }
                 className={`rounded-xl border p-5 text-left transition ${
                   data.eventType === t
                     ? 'border-terracotta bg-terracotta/5'
@@ -226,6 +241,29 @@ export function QuoteWizard() {
             ))}
           </div>
           <FieldError msg={errors.eventType} />
+
+          {data.eventType && (
+            <div className="mt-7">
+              <p className="text-sm font-medium">¿Qué ocasión celebrarás?</p>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {EVENT_SUBTYPES[data.eventType].map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => patch({ eventSubtype: s })}
+                    className={`rounded-xl border px-4 py-3 text-left text-sm transition ${
+                      data.eventSubtype === s
+                        ? 'border-terracotta bg-terracotta/5'
+                        : 'border-sand hover:border-clay'
+                    }`}
+                  >
+                    {EVENT_SUBTYPE_LABELS[s]}
+                  </button>
+                ))}
+              </div>
+              <FieldError msg={errors.eventSubtype} />
+            </div>
+          )}
         </StepShell>
       )}
 
