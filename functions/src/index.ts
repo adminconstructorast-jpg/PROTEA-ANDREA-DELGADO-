@@ -14,6 +14,7 @@ export { onUserProfileCreated, setUserRole } from './auth/roles.js';
 
 // ── CRM: leads y cotizaciones ──
 export { submitQuoteRequest, onLeadCreated } from './crm/leads.js';
+export { generateQuotePdf } from './pdf/generate.js';
 
 // ── CRM: invitados (importación masiva) ──
 export { importGuests } from './crm/guests.js';

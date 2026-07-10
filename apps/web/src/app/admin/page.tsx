@@ -10,7 +10,8 @@ import {
   limit,
   onSnapshot,
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, functions } from '@/lib/firebase';
+import { httpsCallable } from 'firebase/functions';
 import { AdminCalendar } from '@/components/admin/AdminCalendar';
 import {
   COLLECTIONS,
@@ -29,6 +30,29 @@ export default function AdminDashboard() {
   const [newCount, setNewCount] = useState(0);
   const [activeEvents, setActiveEvents] = useState<number | null>(null);
   const [confirmations, setConfirmations] = useState<number | null>(null);
+  const [generatingPdfLeadId, setGeneratingPdfLeadId] = useState<string | null>(null);
+  const [pdfUrls, setPdfUrls] = useState<Record<string, string>>({});
+
+  const handleGeneratePdf = async (leadId: string) => {
+    setGeneratingPdfLeadId(leadId);
+    try {
+      const generateQuotePdfFn = httpsCallable<{ leadId: string }, { success: boolean; url: string }>(
+        functions,
+        'generateQuotePdf',
+      );
+      const res = await generateQuotePdfFn({ leadId });
+      if (res.data.success && res.data.url) {
+        setPdfUrls((prev) => ({ ...prev, [leadId]: res.data.url }));
+      } else {
+        alert('No se pudo generar la cotización. Inténtalo de nuevo.');
+      }
+    } catch (err: any) {
+      console.error('Error generando PDF:', err);
+      alert('Error en el servidor: ' + err.message);
+    } finally {
+      setGeneratingPdfLeadId(null);
+    }
+  };
 
   useEffect(() => {
     const recentQuery = query(
@@ -112,6 +136,7 @@ export default function AdminDashboard() {
                 <th className="px-4 py-3">Invitados</th>
                 <th className="px-4 py-3">Score</th>
                 <th className="px-4 py-3">Estado</th>
+                <th className="px-4 py-3 text-right">Cotización</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-sand">
@@ -126,11 +151,31 @@ export default function AdminDashboard() {
                       {LEAD_STATUS_LABELS[lead.status]}
                     </span>
                   </td>
+                  <td className="px-4 py-3 text-right">
+                    {pdfUrls[lead.id] ? (
+                      <a
+                        href={pdfUrls[lead.id]}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs font-semibold text-gold hover:underline"
+                      >
+                        📄 Descargar PDF
+                      </a>
+                    ) : (
+                      <button
+                        onClick={() => handleGeneratePdf(lead.id)}
+                        disabled={generatingPdfLeadId !== null}
+                        className="text-xs font-medium text-terracotta hover:underline disabled:opacity-50"
+                      >
+                        {generatingPdfLeadId === lead.id ? 'Generando...' : '⚙️ Generar'}
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
               {leads.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-ink/40">
+                  <td colSpan={6} className="px-4 py-8 text-center text-ink/40">
                     Aún no hay prospectos.
                   </td>
                 </tr>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Cotización · Andrea Delgado — Wedding & Event Planner</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@300;400;500;600&display=swap');
+
+    @page {
+      size: A4;
+      margin: 20mm 15mm 20mm 15mm;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: #1c1a17;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+      font-size: 10pt;
+      line-height: 1.5;
+      -webkit-print-color-adjust: exact;
+    }
+
+    /* Contenedor principal */
+    .container {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Encabezado */
+    header {
+      border-bottom: 1px solid #e5dfd5;
+      padding-bottom: 25px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .brand-logo {
+      font-family: 'Cinzel', serif;
+      font-size: 20pt;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #b08968;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .brand-sub {
+      font-size: 7.5pt;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #1c1a17;
+      margin-top: 5px;
+      margin-bottom: 0;
+    }
+
+    .quote-meta {
+      text-align: right;
+      font-size: 8pt;
+      color: #6a645a;
+    }
+
+    .quote-title {
+      font-family: 'Cinzel', serif;
+      font-size: 14pt;
+      letter-spacing: 0.08em;
+      color: #1c1a17;
+      margin: 0 0 8px 0;
+      text-transform: uppercase;
+    }
+
+    /* Bloque de Información del Prospecto y Evento */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 35px;
+    }
+
+    .info-section {
+      background-color: #fcfbfa;
+      border: 1px solid #f2ede4;
+      padding: 20px;
+      border-radius: 4px;
+    }
+
+    .info-section h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 9pt;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #b08968;
+      margin-top: 0;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #e5dfd5;
+      padding-bottom: 8px;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 8.5pt;
+    }
+
+    .info-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-label {
+      font-weight: 500;
+      color: #6a645a;
+    }
+
+    .info-value {
+      color: #1c1a17;
+      text-align: right;
+      font-weight: 400;
+    }
+
+    /* Tabla de Servicios */
+    .services-title {
+      font-family: 'Cinzel', serif;
+      font-size: 10pt;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #1c1a17;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #b08968;
+      padding-bottom: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 35px;
+    }
+
+    th {
+      font-family: 'Cinzel', serif;
+      font-size: 8.5pt;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background-color: #f5f2eb;
+      color: #1c1a17;
+      text-align: left;
+      padding: 12px 15px;
+      font-weight: 600;
+      border-bottom: 1px solid #e5dfd5;
+    }
+
+    td {
+      padding: 12px 15px;
+      font-size: 9pt;
+      border-bottom: 1px solid #f2ede4;
+      color: #3a3732;
+    }
+
+    tr:last-child td {
+      border-bottom: 2px solid #e5dfd5;
+    }
+
+    /* Mensaje adicional */
+    .message-box {
+      margin-bottom: 35px;
+      font-style: italic;
+      font-size: 8.5pt;
+      color: #6a645a;
+      background-color: #fcfbfa;
+      border-left: 3px solid #b08968;
+      padding: 15px 20px;
+    }
+
+    .message-title {
+      font-family: 'Cinzel', serif;
+      font-style: normal;
+      font-size: 8pt;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #1c1a17;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    /* Notas de Pie de Página / Términos */
+    .terms {
+      font-size: 7.5pt;
+      color: #8b8377;
+      margin-top: 50px;
+      border-top: 1px solid #e5dfd5;
+      padding-top: 15px;
+    }
+
+    .terms p {
+      margin: 0 0 5px 0;
+    }
+
+    .footer-logo {
+      text-align: center;
+      margin-top: 40px;
+      font-family: 'Cinzel', serif;
+      font-size: 10pt;
+      letter-spacing: 0.2em;
+      color: #b08968;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1 class="brand-logo">Andrea Delgado</h1>
+        <p class="brand-sub">Wedding & Event Planner</p>
+      </div>
+      <div class="quote-meta">
+        <h2 class="quote-title">Estimación de Evento</h2>
+        <p><strong>Ref:</strong> #{{quoteId}}</p>
+        <p><strong>Fecha Emisión:</strong> {{dateGenerated}}</p>
+      </div>
+    </header>
+
+    <div class="info-grid">
+      <!-- Datos del Cliente -->
+      <div class="info-section">
+        <h3>Contacto</h3>
+        <div class="info-item">
+          <span class="info-label">Nombre:</span>
+          <span class="info-value">{{fullName}}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Email:</span>
+          <span class="info-value">{{email}}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Teléfono:</span>
+          <span class="info-value">{{phone}}</span>
+        </div>
+      </div>
+
+      <!-- Detalles del Evento -->
+      <div class="info-section">
+        <h3>Detalles del Evento</h3>
+        <div class="info-item">
+          <span class="info-label">Tipo:</span>
+          <span class="info-value">{{eventType}} ({{eventSubtype}})</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Fecha:</span>
+          <span class="info-value">{{tentativeDate}}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Invitados:</span>
+          <span class="info-value">{{guestCount}} pax</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Lugar/Venue:</span>
+          <span class="info-value">{{venueName}} ({{city}})</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Presupuesto Estimado:</span>
+          <span class="info-value">{{budgetRange}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Servicios Solicitados -->
+    <div>
+      <h3 class="services-title">Propuesta de Servicios</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 40%;">Servicio Requerido</th>
+            <th style="width: 60%;">Descripción General / Alcance Sugerido</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{servicesTable}}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mensaje del Cliente -->
+    {{messageBox}}
+
+    <!-- Términos y Condiciones Generales -->
+    <div class="terms">
+      <p><strong>Notas Importantes:</strong></p>
+      <p>1. Esta es una estimación conceptual inicial basada en los datos proporcionados en el formulario web. No representa una cotización final ni un contrato vinculante.</p>
+      <p>2. La disponibilidad de la fecha tentativa queda sujeta a confirmación al momento del contacto directo y anticipo correspondiente.</p>
+      <p>3. Los costos reales de proveedores externos (venues, catering, audio e iluminación, etc.) se cotizan de forma personalizada en la etapa de planeación formal.</p>
+    </div>
+
+    <div class="footer-logo">
+      Andrea Delgado · Wedding & Event Planner
+    </div>
+  </div>
+</body>
+</html>

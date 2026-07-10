@@ -47,20 +47,28 @@ function scoreLead(lead: Pick<Lead, 'budgetRange' | 'services' | 'guestCount' | 
  * a Firestore desde el cliente (permite normalización y scoring server-side).
  */
 export const submitQuoteRequest = onCall({ region: REGION }, async (request) => {
+  logger.info("submitQuoteRequest iniciada", { 
+    appCheckEnforce: APP_CHECK_ENFORCE.value(), 
+    hasApp: !!request.app,
+    appToken: request.app ? "PRESENTE" : "MISSING"
+  });
+
   // Refuerzo anti-abuso: cuando App Check está activo, exige un token válido
-  // (emitido por reCAPTCHA en el navegador). Escalonado vía APP_CHECK_ENFORCE
-  // para no bloquear el sitio hasta que la clave esté configurada en el cliente.
   if (APP_CHECK_ENFORCE.value() === 'true' && !request.app) {
+    logger.warn("App Check bloqueó la solicitud por token faltante");
     throw new HttpsError(
       'failed-precondition',
       'Solicitud no verificada. Recarga la página e inténtalo de nuevo.',
     );
   }
 
+  logger.info("Validando datos con quoteRequestSchema...", { data: request.data });
   const parsed = quoteRequestSchema.safeParse(request.data);
   if (!parsed.success) {
+    logger.error("Error de validación en quoteRequestSchema:", parsed.error.format());
     throw new HttpsError('invalid-argument', 'Datos de cotización inválidos', parsed.error.flatten());
   }
+
   const d = parsed.data;
   const phone = normalizePhone(d.phone) ?? d.phone;
 
@@ -71,28 +79,39 @@ export const submitQuoteRequest = onCall({ region: REGION }, async (request) => 
     hasVenue: d.hasVenue,
   });
 
-  const leadRef = await db.collection(COLLECTIONS.LEADS).add({
-    contact: { fullName: d.fullName, email: d.email, phone },
-    eventType: d.eventType,
-    eventSubtype: d.eventSubtype ?? null,
-    tentativeDate: d.tentativeDate,
-    dateIsFlexible: d.dateIsFlexible,
-    guestCount: d.guestCount,
-    hasVenue: d.hasVenue,
-    venueName: d.venueName ?? null,
-    city: d.city ?? null,
-    budgetRange: d.budgetRange,
-    services: d.services,
-    message: d.message ?? null,
-    status: 'new',
-    score,
-    source: 'web_quote_form',
-    utm: d.utm ?? null,
-    createdAt: FieldValue.serverTimestamp(),
-  });
+  logger.info(`Escribiendo lead en Firestore. Score calculado: ${score}`);
+  
+  try {
+    const leadRef = await db.collection(COLLECTIONS.LEADS).add({
+      contact: { fullName: d.fullName, email: d.email, phone },
+      eventType: d.eventType,
+      eventSubtype: d.eventSubtype ?? null,
+      tentativeDate: d.tentativeDate,
+      dateIsFlexible: d.dateIsFlexible,
+      guestCount: d.guestCount,
+      hasVenue: d.hasVenue,
+      venueName: d.venueName ?? null,
+      city: d.city ?? null,
+      budgetRange: d.budgetRange,
+      services: d.services,
+      message: d.message ?? null,
+      status: 'new',
+      score,
+      source: 'web_quote_form',
+      utm: d.utm ?? null,
+      createdAt: FieldValue.serverTimestamp(),
+    });
 
-  logger.info(`Nuevo lead ${leadRef.id} (score ${score})`);
-  return { id: leadRef.id, ok: true };
+    logger.info(`Nuevo lead guardado exitosamente: ${leadRef.id}`);
+    return { id: leadRef.id, ok: true };
+  } catch (error: any) {
+    logger.error("Error crítico al guardar el lead en Firestore:", {
+      message: error.message,
+      stack: error.stack,
+      code: error.code
+    });
+    throw new HttpsError('internal', 'Error al guardar la cotización en el servidor', error.message);
+  }
 });
 
 /**

@@ -66,8 +66,8 @@ export const quoteStepDateSchema = z
 export const quoteStepVenueSchema = z
   .object({
     hasVenue: z.boolean(),
-    venueName: z.string().trim().max(160).optional(),
-    city: z.string().trim().max(120).optional(),
+    venueName: z.string().trim().max(160).nullish(),
+    city: z.string().trim().max(120).nullish(),
     budgetRange: z.enum(BUDGET_RANGES, {
       required_error: 'Selecciona un rango de presupuesto',
     }),
@@ -81,7 +81,7 @@ export const quoteStepServicesSchema = z.object({
   services: z
     .array(z.enum(SERVICE_OPTIONS))
     .min(1, 'Selecciona al menos un servicio'),
-  message: z.string().trim().max(2000).optional(),
+  message: z.string().trim().max(2000).nullish(),
 });
 
 export const quoteStepContactSchema = z.object({
@@ -118,7 +118,7 @@ export const quoteRequestSchema = quoteStepEventFields
   .extend({
     utm: z
       .record(z.enum(['source', 'medium', 'campaign', 'term', 'content']), z.string().max(200))
-      .optional(),
+      .nullish(),
   })
   .superRefine(refineEventSubtype);
 

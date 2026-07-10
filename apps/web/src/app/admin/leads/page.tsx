@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, functions } from '@/lib/firebase';
+import { httpsCallable } from 'firebase/functions';
 import {
   COLLECTIONS,
   LEAD_STATUSES,
@@ -15,6 +16,8 @@ import {
 /** Pipeline de ventas (CRM) tipo kanban por etapa. */
 export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [generatingPdfLeadId, setGeneratingPdfLeadId] = useState<string | null>(null);
+  const [pdfUrls, setPdfUrls] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const q = query(collection(db, COLLECTIONS.LEADS), orderBy('createdAt', 'desc'));
@@ -22,6 +25,27 @@ export default function LeadsPage() {
       setLeads(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Lead));
     });
   }, []);
+
+  const handleGeneratePdf = async (leadId: string) => {
+    setGeneratingPdfLeadId(leadId);
+    try {
+      const generateQuotePdfFn = httpsCallable<{ leadId: string }, { success: boolean; url: string }>(
+        functions,
+        'generateQuotePdf',
+      );
+      const res = await generateQuotePdfFn({ leadId });
+      if (res.data.success && res.data.url) {
+        setPdfUrls((prev) => ({ ...prev, [leadId]: res.data.url }));
+      } else {
+        alert('No se pudo generar la cotización. Inténtalo de nuevo.');
+      }
+    } catch (err: any) {
+      console.error('Error generando PDF:', err);
+      alert('Error en el servidor: ' + err.message);
+    } finally {
+      setGeneratingPdfLeadId(null);
+    }
+  };
 
   return (
     <div>
@@ -54,6 +78,27 @@ export default function LeadsPage() {
                       <a href={`tel:${lead.contact.phone}`} className="text-xs text-terracotta">
                         {lead.contact.phone}
                       </a>
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-sand flex justify-end">
+                      {pdfUrls[lead.id] ? (
+                        <a
+                          href={pdfUrls[lead.id]}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-xs font-semibold text-gold hover:underline flex items-center gap-1"
+                        >
+                          📄 Descargar PDF
+                        </a>
+                      ) : (
+                        <button
+                          onClick={() => handleGeneratePdf(lead.id)}
+                          disabled={generatingPdfLeadId !== null}
+                          className="text-xs font-medium text-terracotta hover:underline disabled:opacity-50"
+                        >
+                          {generatingPdfLeadId === lead.id ? 'Generando...' : '⚙️ Generar Cotización'}
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
