@@ -25,6 +25,38 @@ Actions → Run workflow) para que lleguen a las funciones.
 *Detalle completo en `scripts/README.md`. Para que el paso final publique solo,
 agrega el secreto `VERCEL_TOKEN` (créalo en vercel.com → Settings → Tokens).*
 
+## 0.5 Endurecer el cotizador y el chat (recomendado antes de tráfico real) 🛡️
+
+El cotizador y el chatbot son públicos. Para blindarlos contra spam/bots y
+proteger la clave de IA, el código ya trae **App Check (reCAPTCHA v3)** listo,
+con activación en dos pasos para no interrumpir el sitio en vivo.
+
+**A) Correo de nuevos leads — extensión Trigger Email**
+El código ya encola los avisos en la colección `mail`; falta el motor de envío.
+En [Firebase → Extensions](https://console.firebase.google.com/project/protea-andrea-delgado/extensions)
+instala **Trigger Email from Firestore** (`firebase/firestore-send-email`) con:
+
+| Parámetro de la extensión | Valor |
+|---|---|
+| Email documents collection | `mail` |
+| Default FROM address | p. ej. `PROTEA <hola@proteaeventos.mx>` |
+| SMTP connection URI | tu SMTP, p. ej. `smtps://usuario:pass@smtp.gmail.com:465` |
+
+Sin ella el lead se guarda igual; solo no sale el correo.
+
+**B) App Check (reCAPTCHA v3) — activación escalonada**
+
+1. En [Firebase → App Check](https://console.firebase.google.com/project/protea-andrea-delgado/appcheck)
+   registra la **app web** con proveedor **reCAPTCHA v3**. Copia la **clave de
+   sitio** (pública).
+2. En **Vercel** → proyecto → Settings → Environment Variables agrega
+   `NEXT_PUBLIC_FIREBASE_APPCHECK_KEY` con esa clave y vuelve a desplegar. *(Con
+   esto el navegador ya emite tokens; el backend todavía no los exige, así que
+   nada se rompe.)*
+3. Cuando confirmes que el sitio sigue bien, agrega el GitHub Secret
+   `APP_CHECK_ENFORCE` = `true` y corre **Deploy · PROTEA**. A partir de ahí el
+   backend **rechaza** cotizaciones y mensajes de chat sin token válido.
+
 ## 1. Acceso de Andrea al panel (`/admin`) — 2 minutos 🔑
 
 | Secreto | Valor |

@@ -1,507 +1,182 @@
 {
-  "generatedAt": "2026-07-09T22:50:45.148Z",
+  "generatedAt": "curated-2026-07-09",
   "bucket": "protea-andrea-delgado.firebasestorage.app",
-  "hero": "/portfolio/bodas/0836-001.webp",
+  "hero": "/portfolio/bodas/boda-01.webp",
   "images": [
     {
-      "src": "/portfolio/bodas/0836-001.webp",
+      "src": "/portfolio/bodas/boda-01.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Salón de boda con drapeados y montaje de gala — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0854-002.webp",
+      "src": "/portfolio/bodas/boda-02.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Altar floral en tonos blancos — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0866-003.webp",
+      "src": "/portfolio/bodas/boda-03.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Ceremonia junto al ventanal con arco floral — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0868-004.webp",
+      "src": "/portfolio/bodas/boda-04.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Los novios con serenata de mariachi — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0871-005.webp",
+      "src": "/portfolio/bodas/boda-05.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Los novios en el salón — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0872-006.webp",
+      "src": "/portfolio/bodas/boda-06.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Arco floral de columnas — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0873-007.webp",
+      "src": "/portfolio/bodas/boda-07.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Muro de flores blancas — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0877-008.webp",
+      "src": "/portfolio/bodas/boda-08.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Pastel de boda de varios pisos — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0894-009.webp",
+      "src": "/portfolio/bodas/boda-09.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Altar floral con marcos y velas — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0895-010.webp",
+      "src": "/portfolio/bodas/boda-10.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Salón de recepción con drapeados — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0896-011.webp",
+      "src": "/portfolio/bodas/boda-11.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Mesas redondas montadas — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0900-012.webp",
+      "src": "/portfolio/bodas/boda-12.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Pista de baile de rayas — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0902-013.webp",
+      "src": "/portfolio/bodas/boda-13.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Barra de coctelería con arcos — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0903-014.webp",
+      "src": "/portfolio/bodas/boda-14.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Centro de mesa con candelabros altos — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0904-015.webp",
+      "src": "/portfolio/bodas/boda-15.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Centro de mesa de rosas blancas — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0906-016.webp",
+      "src": "/portfolio/bodas/boda-16.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Mesa imperial con rosas blancas — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0910-017.webp",
+      "src": "/portfolio/bodas/boda-17.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Mesa larga con flores blancas — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0913-018.webp",
+      "src": "/portfolio/bodas/boda-18.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Mesa con velas y flores — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/0915-019.webp",
+      "src": "/portfolio/bodas/boda-19.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Mesa imperial montada — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/1056-020.webp",
+      "src": "/portfolio/bodas/boda-20.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Detalle de flores blancas — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/1282-021.webp",
+      "src": "/portfolio/bodas/boda-21.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Montaje de mesa redonda — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/1283-022.webp",
+      "src": "/portfolio/bodas/boda-22.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Mesa redonda con velas — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/1288-023.webp",
+      "src": "/portfolio/bodas/boda-23.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Mesa redonda con centro de velas — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/1302-024.webp",
+      "src": "/portfolio/bodas/boda-24.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Candelabros y drapeados — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/1308-025.webp",
+      "src": "/portfolio/bodas/boda-25.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Mesa oval junto a la pista — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/1310-026.webp",
+      "src": "/portfolio/bodas/boda-26.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Panorámica del salón — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/1314-027.webp",
+      "src": "/portfolio/bodas/boda-27.webp",
       "category": "bodas",
-      "alt": "Evento diseñado por Andrea Delgado — Boda diseñada por Andrea Delgado"
+      "alt": "Pista de baile con monograma — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/553-daryana-y-gilberto-028.webp",
+      "src": "/portfolio/bodas/boda-28.webp",
       "category": "bodas",
-      "alt": "Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
+      "alt": "Escenario con banda en vivo — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/556-daryana-y-gilberto-029.webp",
+      "src": "/portfolio/bodas/boda-29.webp",
       "category": "bodas",
-      "alt": "Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
+      "alt": "Los novios en la estación de regalos — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/560-daryana-y-gilberto-030.webp",
+      "src": "/portfolio/bodas/boda-30.webp",
       "category": "bodas",
-      "alt": "Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
+      "alt": "Estación de regalos con playeras de la boda — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/570-daryana-y-gilberto-031.webp",
+      "src": "/portfolio/bodas/boda-31.webp",
       "category": "bodas",
-      "alt": "Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
+      "alt": "Estación “The Merch” — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/571-daryana-y-gilberto-032.webp",
+      "src": "/portfolio/bodas/boda-32.webp",
       "category": "bodas",
-      "alt": "Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
+      "alt": "Muro de regalos “The Merch” — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/573-daryana-y-gilberto-033.webp",
+      "src": "/portfolio/bodas/boda-33.webp",
       "category": "bodas",
-      "alt": "Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
+      "alt": "Detalle: lentes de cortesía — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/575-daryana-y-gilberto-034.webp",
+      "src": "/portfolio/bodas/boda-34.webp",
       "category": "bodas",
-      "alt": "Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
+      "alt": "Detalle de papelería e invitaciones — Andrea Delgado"
     },
     {
-      "src": "/portfolio/bodas/690-daryana-y-gilberto-035.webp",
+      "src": "/portfolio/bodas/boda-35.webp",
       "category": "bodas",
-      "alt": "Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0836-1-036.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0836-037.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0854-1-038.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0854-039.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0866-1-040.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0866-041.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0868-1-042.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0868-043.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0871-1-044.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0871-045.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0872-1-046.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0872-047.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0873-1-048.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0873-049.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0877-1-050.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0877-051.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0894-1-052.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0894-053.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0895-1-054.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0895-055.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0896-1-056.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0896-057.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0900-1-058.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0900-059.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0902-1-060.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0902-061.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0903-1-062.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0903-063.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0904-1-064.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0904-065.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0906-1-066.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0906-067.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0910-1-068.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0910-069.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0913-1-070.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0913-071.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0915-1-072.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-0915-073.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-1056-1-074.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-1056-075.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-1282-1-076.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-1282-077.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-1283-1-078.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-1283-079.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-1288-1-080.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-1288-081.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-1302-1-082.webp",
-      "category": "bodas",
-      "alt": "Copia De 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-1302-083.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-1308-084.webp",
-      "category": "bodas",
-      "alt": "Copia De — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-553-daryana-y-gilberto-1-085.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-553-daryana-y-gilberto-086.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-556-daryana-y-gilberto-1-087.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-556-daryana-y-gilberto-088.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-560-daryana-y-gilberto-1-089.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-560-daryana-y-gilberto-090.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-570-daryana-y-gilberto-1-091.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-570-daryana-y-gilberto-092.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-571-daryana-y-gilberto-1-093.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-571-daryana-y-gilberto-094.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-573-daryana-y-gilberto-1-095.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-573-daryana-y-gilberto-096.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-575-daryana-y-gilberto-1-097.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-575-daryana-y-gilberto-098.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-690-daryana-y-gilberto-1-099.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto 1 — Boda diseñada por Andrea Delgado"
-    },
-    {
-      "src": "/portfolio/bodas/copia-de-690-daryana-y-gilberto-100.webp",
-      "category": "bodas",
-      "alt": "Copia De Daryana Y Gilberto — Boda diseñada por Andrea Delgado"
+      "alt": "Menú de la cena — Andrea Delgado"
     }
   ]
 }

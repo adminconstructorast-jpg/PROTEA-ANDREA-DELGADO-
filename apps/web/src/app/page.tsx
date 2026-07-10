@@ -4,18 +4,12 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { Reveal } from '@/components/Reveal';
 import { ChatWidget } from '@/components/ChatWidget';
-import {
-  HERO_IMAGE,
-  CATEGORY_META,
-  PORTFOLIO_IMAGES,
-  populatedCategories,
-} from '@/lib/portfolio';
+import { PortfolioGallery } from '@/components/PortfolioGallery';
+import { HERO_IMAGE, CATEGORY_META, PORTFOLIO_IMAGES } from '@/lib/portfolio';
 
 const CTA_IMAGE = PORTFOLIO_IMAGES[1]?.src ?? HERO_IMAGE;
 
 export default function HomePage() {
-  const categories = populatedCategories();
-
   return (
     <>
       <SiteHeader />
@@ -141,36 +135,12 @@ export default function HomePage() {
               <h2 className="mt-3 font-serif text-3xl md:text-4xl">Portafolio</h2>
               <p className="mt-4 text-ink/60">
                 Una selección de los eventos que hemos tenido el honor de crear.
+                Filtra por tipo de celebración.
               </p>
             </div>
           </Reveal>
 
-          {categories.map((cat) => (
-            <div key={cat.key} className="mt-16 first:mt-14">
-              <div className="mb-6 flex items-baseline justify-between border-b border-sand pb-3">
-                <h3 className="font-serif text-2xl">{cat.label}</h3>
-                <span className="text-xs uppercase tracking-luxe text-gold">
-                  {cat.images.length} {cat.images.length === 1 ? 'evento' : 'eventos'}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
-                {cat.images.map((img, i) => (
-                  <Reveal key={`${img.src}-${i}`} delay={Math.min(i, 6) * 60}>
-                    <div className="group relative aspect-[4/5] overflow-hidden rounded-2xl bg-sand">
-                      <Image
-                        src={img.src}
-                        alt={img.alt}
-                        fill
-                        className="object-cover transition duration-700 group-hover:scale-105"
-                        sizes="(min-width: 1024px) 33vw, 50vw"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-ink/30 via-transparent to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
-            </div>
-          ))}
+          <PortfolioGallery />
         </div>
       </section>
 

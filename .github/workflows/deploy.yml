@@ -150,6 +150,7 @@ jobs:
           CFDI_ISSUER_NAME=${CFDI_ISSUER_NAME:-}
           CFDI_ISSUER_TAX_REGIME=${CFDI_ISSUER_TAX_REGIME:-612}
           CFDI_EXPEDITION_ZIP=${CFDI_EXPEDITION_ZIP:-}
+          APP_CHECK_ENFORCE=${APP_CHECK_ENFORCE:-false}
           EOF
         env:
           PLANNER_EMAIL: ${{ secrets.PLANNER_EMAIL }}
@@ -161,6 +162,7 @@ jobs:
           CFDI_ISSUER_NAME: ${{ secrets.CFDI_ISSUER_NAME }}
           CFDI_ISSUER_TAX_REGIME: ${{ secrets.CFDI_ISSUER_TAX_REGIME }}
           CFDI_EXPEDITION_ZIP: ${{ secrets.CFDI_EXPEDITION_ZIP }}
+          APP_CHECK_ENFORCE: ${{ secrets.APP_CHECK_ENFORCE }}
 
       - name: Deploy Functions y reglas (CLI)
         run: |

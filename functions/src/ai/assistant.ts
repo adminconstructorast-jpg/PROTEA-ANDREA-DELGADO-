@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions/v2';
-import { REGION, ANTHROPIC_API_KEY, AI_MODEL } from '../config.js';
+import { REGION, ANTHROPIC_API_KEY, AI_MODEL, APP_CHECK_ENFORCE } from '../config.js';
 import { db } from '../lib/admin.js';
 import { COLLECTIONS } from '../shared.js';
 
@@ -46,6 +46,15 @@ Nunca inventes precios exactos ni compromisos de disponibilidad; ofrece rangos o
 export const chatWithAssistant = onCall(
   { region: REGION, secrets: [ANTHROPIC_API_KEY] },
   async (request) => {
+    // Refuerzo App Check (escalonado), igual que el cotizador: protege la
+    // clave de Anthropic del abuso desde clientes no verificados.
+    if (APP_CHECK_ENFORCE.value() === 'true' && !request.app) {
+      throw new HttpsError(
+        'failed-precondition',
+        'Solicitud no verificada. Recarga la página e inténtalo de nuevo.',
+      );
+    }
+
     const { messages } = request.data as {
       messages: Array<{ role: 'user' | 'assistant'; content: string }>;
     };
