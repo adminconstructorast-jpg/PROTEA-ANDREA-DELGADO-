@@ -75,9 +75,13 @@ export default function HomePage() {
               Cada celebración merece un relato propio.
             </h2>
             <p className="mx-auto mt-6 max-w-lg text-ink/70">
-              Con más de una década diseñando bodas y eventos de alto perfil, Andrea Delgado
-              combina visión estética, precisión logística y calidez humana para cuidar cada
-              detalle — desde el concepto hasta el último invitado que se despide.
+              Con más de una década al frente de celebraciones de alto perfil, Andrea Delgado
+              diseña <strong className="font-medium text-ink">bodas de destino</strong> en los
+              escenarios más codiciados de México, <strong className="font-medium text-ink">eventos
+              sociales boutique</strong> donde cada detalle cuenta una historia, y{' '}
+              <strong className="font-medium text-ink">experiencias corporativas de alto nivel</strong> —
+              lanzamientos de marca, congresos y aniversarios de empresa. Visión estética,
+              precisión logística y calidez humana, del concepto al último invitado que se despide.
             </p>
             <div className="mx-auto mt-12 grid max-w-sm grid-cols-2 gap-8 border-t border-sand pt-8">
               <div>

@@ -1,5 +1,8 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Logo } from './Logo';
+import { SocialIcon } from './icons/SocialIcon';
+import { VISIBLE_SOCIAL_LINKS } from '@/lib/social';
 
 export function SiteFooter() {
   return (
@@ -10,6 +13,21 @@ export function SiteFooter() {
           <p className="mt-4 text-sm text-ink/70">
             Wedding &amp; Event Planning de alto perfil en México.
           </p>
+          {/* Fila de íconos rápidos (las mismas redes de la columna Síguenos). */}
+          <div className="mt-5 flex items-center gap-4">
+            {VISIBLE_SOCIAL_LINKS.map((s) => (
+              <a
+                key={s.id}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.label}
+                className="text-ink/60 transition hover:text-terracotta"
+              >
+                <SocialIcon id={s.id} className="h-5 w-5" />
+              </a>
+            ))}
+          </div>
         </div>
         <div>
           <p className="eyebrow mb-3">Explora</p>
@@ -27,18 +45,31 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <p className="eyebrow mb-3">Contacto</p>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <a
-                href="https://www.instagram.com/andreadelgadoplanner/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-terracotta"
-              >
-                @andreadelgadoplanner
-              </a>
-            </li>
+          <p className="eyebrow mb-3">Síguenos</p>
+          <ul className="space-y-3 text-sm">
+            {VISIBLE_SOCIAL_LINKS.map((s) => (
+              <li key={s.id}>
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 hover:text-terracotta"
+                >
+                  <SocialIcon id={s.id} className="h-4 w-4 shrink-0" />
+                  <span>{s.handle}</span>
+                </a>
+                {/* Espacio preparado: al asignar `qrSrc` en lib/social.ts, el QR aparece aquí. */}
+                {s.qrSrc && (
+                  <Image
+                    src={s.qrSrc}
+                    alt={`Código QR de ${s.label}`}
+                    width={96}
+                    height={96}
+                    className="mt-2 rounded-lg border border-sand bg-white p-1"
+                  />
+                )}
+              </li>
+            ))}
           </ul>
         </div>
       </div>
